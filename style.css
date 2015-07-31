@@ -1,0 +1,25 @@
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #aaf;
+}
+#content {
+  margin: 1em auto;
+  max-width: 100ex;
+  width: 100%;
+  background-color: white;
+  color: black;
+}
+#plane {
+  border: 2px solid red;
+  width: 50ex;
+  height: 50ex;
+  background-color: white;
+  float: left;
+  margin: 1ex;
+}
+#function-choice > label {
+  display: inline-block;
+  margin: 0 1ex;
+}

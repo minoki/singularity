@@ -1,0 +1,19 @@
+{
+  "name": "singularity",
+  "version": "0.0.0",
+  "authors": [
+    "ARATA Mizuki <minorinoki@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "rxjs": "~2.3.24"
+  }
+}
