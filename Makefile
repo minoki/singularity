@@ -55,7 +55,7 @@ cache.manifest: $(srcfiles)
 	done
 
 index.xhtml: index.xhtml.in strip-space.xsl
-	xsltproc --path DTD --encoding UTF-8 -o $@ strip-space.xsl $<
+	xsltproc --encoding UTF-8 -o $@ strip-space.xsl $<
 
 index.js: $(tsfiles)
 	tsc --out $@ $(tscflags) $(maints)
