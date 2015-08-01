@@ -1,4 +1,3 @@
-/// <reference path="../touch.d.ts"/>
 /// <reference path="../ArrayPolyfill.ts"/>
 
 module UIUtil

@@ -3,7 +3,6 @@
 /// <reference path="UIUtil/pointer.ts"/>
 /// <reference path="UIUtil/line.ts"/>
 /// <reference path="UIUtil/requestAnimationFrame.ts"/>
-/// <reference path="touch.d.ts"/>
 /// <reference path="../bower_components/rxjs/ts/rx.d.ts"/>
 
 interface PointerHandler
