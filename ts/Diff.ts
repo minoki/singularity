@@ -76,6 +76,10 @@ module DiffComplex
     {
         return {value: Complex.imagPart(z.value), diff: Complex.imagPart(z.diff)};
     }
+    export function conjugate(z: Diff<Complex>): Diff<Complex>
+    {
+        return {value: Complex.conjugate(z.value), diff: Complex.conjugate(z.diff)};
+    }
     export function add(x: Diff<Complex>, y: Diff<Complex>): Diff<Complex>
     {
         return {value: Complex.add(x.value, y.value), diff: Complex.add(x.diff, y.diff)};

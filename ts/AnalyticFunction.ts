@@ -83,4 +83,42 @@ var WellknownFunctions: {[name: string]: AnalyticFunction;} = {
             return a;
         }
     },
+    "z/sin(z)": {
+        value: z => {
+            if (Complex.equals(z, Complex.ZERO)) {
+                return Complex.ONE;
+            } else {
+                return Complex.div(z, Complex.sin(z));
+            }
+        },
+        diff: z => {
+            if (Complex.equals(z.value, Complex.ZERO)) {
+                return {value: Complex.ONE, diff: Complex.ZERO};
+            } else {
+                return DiffComplex.div(z, DiffComplex.sin(z));
+            }
+        },
+        singularitiesIn: (realRange, imagRange) => {
+            // \{2k\pi i \mid k\in\mathbb{Z}, k\ne 0\}
+            let i = Math.floor(realRange.min/Math.PI);
+            let j = Math.ceil(realRange.max/Math.PI);
+            let a: Complex[] = [];
+            for (let k = i; k <= j; ++k) {
+                if (k !== 0) {
+                    a.push(Complex.fromReal(Math.PI*k));
+                }
+            }
+            return a;
+        }
+    },
+    "conj(z)": {
+        value: Complex.conjugate,
+        diff: DiffComplex.conjugate,
+        singularitiesIn: (realRange, imagRange) => []
+    },
+    "(z+conj(z))/2": {
+        value: z => Complex.fromReal(Complex.realPart(z)),
+        diff: z => DiffComplex.fromReal(DiffComplex.realPart(z)),
+        singularitiesIn: (realRange, imagRange) => []
+    }
 };

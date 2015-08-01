@@ -45,6 +45,18 @@
           <input type="radio" name="function" data-function-name="tan(z)" />
           <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi>f</mi><mo stretchy="false" form="prefix">(</mo><mi>z</mi><mo stretchy="false" form="postfix">)</mo></mrow><mo>=</mo><mrow><mi>tan</mi><mi>z</mi></mrow></mrow><annotation encoding="application/x-tex">f(z)=\tan z</annotation></semantics></math>
         </label>
+        <label>
+          <input type="radio" name="function" data-function-name="z/sin(z)" />
+          <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi>f</mi><mo stretchy="false" form="prefix">(</mo><mi>z</mi><mo stretchy="false" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mi>z</mi><mrow><mi>sin</mi><mi>z</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">f(z)=\frac{z}{\sin z}</annotation></semantics></math>
+        </label>
+        <label>
+          <input type="radio" name="function" data-function-name="conj(z)" />
+          <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi>f</mi><mo stretchy="false" form="prefix">(</mo><mi>z</mi><mo stretchy="false" form="postfix">)</mo></mrow><mo>=</mo><mover><mi>z</mi><mo accent="true">‾</mo></mover></mrow><annotation encoding="application/x-tex">f(z)=\bar{z}</annotation></semantics></math>
+        </label>
+        <label>
+          <input type="radio" name="function" data-function-name="(z+conj(z))/2" />
+          <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi>f</mi><mo stretchy="false" form="prefix">(</mo><mi>z</mi><mo stretchy="false" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><mi>z</mi><mo>+</mo><mover><mi>z</mi><mo accent="true">‾</mo></mover></mrow><mn>2</mn></mfrac></mrow><annotation encoding="application/x-tex">f(z)=\frac{z+\bar{z}}{2}</annotation></semantics></math>
+        </label>
       </div>
       <div id="mode-choice">
         <label><input type="radio" name="mode" id="mode-draw" checked="checked" />曲線を描く</label>
