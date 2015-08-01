@@ -1,59 +1,71 @@
 # Singularity Makefile
 
-mainjs= index.min.js
 maints= index.ts
+
+# TypeScript sources
 tsfiles= \
  index.ts \
- ts/Complex.ts \
- ts/Curve.ts \
- ts/Integrate.ts \
- ts/ComplexPlaneView.ts \
- ts/ComplexIntegralView.ts \
+ ts/AffineTransform.ts \
  ts/AnalyticFunction.ts \
- bower_components/rxjs/ts/rx.d.ts
+ ts/Complex.ts \
+ ts/ComplexIntegralView.ts \
+ ts/ComplexPlaneView.ts \
+ ts/Curve.ts \
+ ts/Diff.ts \
+ ts/Integrate.ts \
+ ts/UIUtil/line.ts \
+ ts/UIUtil/pointer.ts \
+ ts/UIUtil/requestAnimationFrame.ts \
  bower_components/rxjs/ts/rx.d.ts \
  typings/es6-shim/es6-shim.d.ts
 
-tscflags= --noImplicitAny --removeComments -t ES5 --noEmitOnError
-
-inkscape= $(shell which inkscape || which /Applications/Inkscape.app/Contents/Resources/bin/inkscape)
-closure-compiler= $(shell which closure-compiler || which closure)
-gzip= $(shell which zopfli || echo gzip -9 -k)
-
-icon-sizes= 56x56 76x76 120x120 128x128 152x152 196x196 512x512
-
-srcfiles= \
+# Generated files
+files= \
  index.xhtml \
  style.css \
- $(mainjs) \
+ index.min.js \
  bower_components/rxjs/dist/rx.js \
  bower_components/rxjs/dist/rx.min.js \
+ bower_components/rxjs/dist/rx.map \
  bower_components/es6-shim/es6-shim.js \
  bower_components/es6-shim/es6-shim.min.js \
  bower_components/es6-shim/es6-shim.map
-files= $(srcfiles) \
- index.xhtml.gz \
- $(mainjs).gz \
- bower_components/rxjs/dist/rx.js.gz \
- bower_components/rxjs/dist/rx.min.js.gz
+
+# Files that will be installed (including gzipped version of the files)
+installfiles= $(files) \
+ $(patsubst %,%.gz,$(filter %.js %.xhtml %.css %.map,$(files)))
+
+# Compiler options
+tscflags= --noImplicitAny --removeComments -t ES5 --noEmitOnError
+
+# Google Closure Compiler must be installed...
+# - via npm (globally): `npm install -g google-closure-compiler`
+# - via npm (locally): `npm install google-closure-compiler`
+# - as `closure-compiler` command (e.g. Homebrew)
+# - as `closure` command (e.g. Arch Linux)
+# Alternatively, you can provide `closure-compiler-jar` variable with the path to `compiler.jar`.
+closure-compiler-jar-candidates= \
+ /usr/local/lib/node_modules/google-closure-compiler/compiler.jar \
+ ~/node_modules/google-closure-compiler/compiler.jar
+closure-compiler-jar= $(shell $(foreach jar,$(closure-compiler-jar-candidates),(test -f $(jar) && echo $(jar)) ||) echo compiler.jar)
+closure-compiler= $(shell \
+ (test -f $(closure-compiler-jar) && echo java -jar $(closure-compiler-jar)) \
+ || which closure-compiler \
+ || which closure)
+
+# Gzip compression command:
+# Zopfli (https://github.com/google/zopfli) or plain gzip
+gzip= $(shell which zopfli || echo gzip -9 -k)
 
 name= singularity
 dest= /Library/WebServer/Documents/webapp/$(name)
 
 all: $(files)
 
-install: $(files)
-	for f in $(files); do \
+install: $(installfiles)
+	for f in $(installfiles); do \
 	    mkdir -p $(dest)/`dirname $$f`; \
 	    install -m 0644 -p $$f $(dest)/$$f; \
-	done
-
-cache.manifest: $(srcfiles)
-	@echo "Writing $@..."
-	@echo "CACHE MANIFEST" > $@
-	@echo "# Date:$(shell LANG=C date)" >> $@
-	@for f in $(srcfiles); do \
-	    echo $$f >> $@; \
 	done
 
 index.xhtml: index.xhtml.in strip-space.xsl
