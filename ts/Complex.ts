@@ -1,7 +1,6 @@
 // Complex number
 
-/// <reference path="NumberPolyfill.ts"/>
-/// <reference path="MathPolyfill.ts"/>
+/// <reference path="../typings/es6-shim/es6-shim.d.ts"/>
 
 type Complex = {x: number; y: number;};
 

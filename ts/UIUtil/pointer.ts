@@ -1,4 +1,4 @@
-/// <reference path="../ArrayPolyfill.ts"/>
+/// <reference path="../../typings/es6-shim/es6-shim.d.ts"/>
 
 module UIUtil
 {

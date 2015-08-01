@@ -9,11 +9,10 @@ tsfiles= \
  ts/Integrate.ts \
  ts/ComplexPlaneView.ts \
  ts/ComplexIntegralView.ts \
- ts/MathPolyfill.ts \
- ts/NumberPolyfill.ts \
- ts/ArrayPolyfill.ts \
  ts/AnalyticFunction.ts \
  bower_components/rxjs/ts/rx.d.ts
+ bower_components/rxjs/ts/rx.d.ts \
+ typings/es6-shim/es6-shim.d.ts
 
 tscflags= --noImplicitAny --removeComments -t ES5 --noEmitOnError
 
@@ -28,7 +27,10 @@ srcfiles= \
  style.css \
  $(mainjs) \
  bower_components/rxjs/dist/rx.js \
- bower_components/rxjs/dist/rx.min.js
+ bower_components/rxjs/dist/rx.min.js \
+ bower_components/es6-shim/es6-shim.js \
+ bower_components/es6-shim/es6-shim.min.js \
+ bower_components/es6-shim/es6-shim.map
 files= $(srcfiles) \
  index.xhtml.gz \
  $(mainjs).gz \
@@ -70,8 +72,11 @@ index.min.js index.js.map: index.js
 	$(closure-compiler) --language_in ECMASCRIPT5_STRICT --create_source_map index.js.map --js_output_file $@ --js $<
 	@echo "//# sourceMappingURL=index.js.map" >> $@
 
-bower_components/rxjs/dist/rx.js bower_components/rxjs/dist/rx.min.js bower_components/rxjs/ts/rx.d.ts:
+$(filter bower_components/%,$(files) $(tsfiles)):
 	bower update
+
+$(filter typings/%,$(tsfiles)):
+	tsd update
 
 %.gz: %
 	$(gzip) $<
