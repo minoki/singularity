@@ -22,4 +22,5 @@ body {
 #function-choice > label {
   display: inline-block;
   margin: 0 1ex;
+  min-width: 6em;
 }
