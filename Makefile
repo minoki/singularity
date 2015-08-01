@@ -30,6 +30,7 @@ srcfiles= \
  bower_components/rxjs/dist/rx.js \
  bower_components/rxjs/dist/rx.min.js
 files= $(srcfiles) \
+ index.xhtml.gz \
  $(mainjs).gz \
  bower_components/rxjs/dist/rx.js.gz \
  bower_components/rxjs/dist/rx.min.js.gz
