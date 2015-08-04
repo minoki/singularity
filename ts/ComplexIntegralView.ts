@@ -44,14 +44,15 @@ class ComplexIntegralView extends ComplexPlaneView
         }
         this.doDrawLabels(context, rect, realRange, imagRange);
     }
-    doHandlePointerEvent(x: number, y: number, initialLocation: Complex): UIUtil.PointerHandler
+    doHandlePointerEvent(x: number, y: number): UIUtil.PointerHandler
     {
         let modeDraw = <HTMLInputElement>document.getElementById("mode-draw");
         let modeDrawClosed = <HTMLInputElement>document.getElementById("mode-draw-closed");
         let modeScroll = <HTMLInputElement>document.getElementById("mode-scroll");
         if (modeScroll.checked) {
-            return this.startScrolling(x, y, initialLocation);
+            return this.startScrolling(x, y);
         } else {
+            let initialLocation = this.convertFromView(this.physicalToView(x, y));
             let a: Complex[] = [initialLocation];
             return {
                 move: (x, y) => {

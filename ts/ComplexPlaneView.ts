@@ -63,8 +63,9 @@ class ComplexPlaneView
         this.refresh();
     }
 
-    startScrolling(x: number, y: number, initialCoord: Complex): UIUtil.PointerHandler
+    startScrolling(x: number, y: number): UIUtil.PointerHandler
     {
+        let initialCoord = this.convertFromView(this.physicalToView(x, y));
         let pointerLocationSource = new Rx.Subject<Complex>();
         this.addPointer(initialCoord, pointerLocationSource);
         return {
@@ -77,15 +78,14 @@ class ComplexPlaneView
         };
     }
 
-    doHandlePointerEvent(x: number, y: number, initialCoord: Complex)
+    doHandlePointerEvent(x: number, y: number)
     {
-        return this.startScrolling(x, y, initialCoord);
+        return this.startScrolling(x, y);
     }
 
     private onPointerEvent(x: number, y: number): UIUtil.PointerHandler
     {
-        let initialCoord = this.convertFromView(this.physicalToView(x, y));
-        return this.doHandlePointerEvent(x, y, initialCoord);
+        return this.doHandlePointerEvent(x, y);
     }
 
     private onKeyPress(event: KeyboardEvent)
