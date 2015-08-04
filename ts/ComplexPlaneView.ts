@@ -5,12 +5,6 @@
 /// <reference path="UIUtil/requestAnimationFrame.ts"/>
 /// <reference path="../bower_components/rxjs/ts/rx.d.ts"/>
 
-interface PointerHandler
-{
-    move?: (z: Complex) => void;
-    end?: (z: Complex) => void;
-}
-
 interface NRange
 {
     min: number;
@@ -25,7 +19,6 @@ interface PointerWatch
 
 class ComplexPlaneView
 {
-    enableScrolling: boolean = true;
     constructor(
         public canvas: HTMLCanvasElement,
         private _coord: ComplexAffineTransform = ComplexAffineTransform.fromScale(Complex.fromReal(0.35))
@@ -175,23 +168,6 @@ class ComplexPlaneView
         return this.physicalToView(o.clientX-rect.left, o.clientY-rect.top);
     }
 
-    /*
-    drawHanddrawn(context: CanvasRenderingContext2D)
-    {
-        context.save();
-        context.lineWidth = 5;
-        this._handdrawn.forEach(a => {
-            context.strokeStyle = a.color;
-            context.beginPath();
-            a.components.forEach((p,i) => {
-                p.buildPath(context, this._coord, i !== 0);
-            });
-            context.stroke();
-        });
-        context.restore();
-    }
-*/
-
     public draw()
     {
         let w = this.canvas.width;
@@ -308,7 +284,6 @@ class ComplexPlaneView
     {
         this.doDrawGrid(context, rect, realRange, imagRange);
         this.doDrawAxes(context, rect);
-        //this.drawHanddrawn(context);
         this.doDrawLabels(context, rect, realRange, imagRange);
     }
 
@@ -358,7 +333,6 @@ class ComplexPlaneView
     }
 
     // Pointer handling
-    _pointerHandler: (z: Complex) => PointerHandler;
     private _pointerCurrentAction: Rx.IDisposable = null;
     private _pointers: Array<{init: Complex; source: Rx.Observable<Complex>; disposable: Rx.IDisposable}> = [];
     private addPointer(init: Complex, s: Rx.Observable<Complex>) {
@@ -408,17 +382,3 @@ class ComplexPlaneView
         });
     }
 }
-
-/*
-window.addEventListener("load", () => {
-    var viewArea = document.getElementById("view-area");
-    var adjustSize = () => {
-        var rect = viewArea.getBoundingClientRect();
-        var top = rect.top + window.pageYOffset;
-        var clientHeight = document.body.clientHeight;
-        viewArea.style.height = (clientHeight - top).toString() + "px";
-    };
-    adjustSize();
-    window.addEventListener("resize", adjustSize, false);
-}, false);
-*/
