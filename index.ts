@@ -9,7 +9,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }, false);
     let functionRadioButtons: HTMLInputElement[] = Array.prototype.filter.call(document.getElementsByName("function"), (e: HTMLElement) => e.tagName === "input" && e.getAttribute("type") === "radio");
     functionRadioButtons.forEach(b => {
-        let functionName = b.getAttribute("data-function-name");
+        let functionName = b.value;
         let func = WellknownFunctions[functionName];
         if (!func) {
             console.error("function " + functionName + " not found");
