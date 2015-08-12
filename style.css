@@ -18,6 +18,7 @@ body {
   background-color: white;
   float: left;
   margin: 1ex;
+  touch-action: none;
 }
 #function-choice > label {
   display: inline-block;
