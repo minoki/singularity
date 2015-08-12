@@ -76,7 +76,7 @@ class ComplexIntegralView extends ComplexPlaneView
     }
 
     private _function: AnalyticFunction = null;
-    set func(f: AnalyticFunction)
+    set "function"(f: AnalyticFunction)
     {
         if (this._function !== f) {
             this._function = f;

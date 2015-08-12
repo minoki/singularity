@@ -15,10 +15,10 @@ window.addEventListener("DOMContentLoaded", () => {
             console.error("function " + functionName + " not found");
         } else {
             if (b.checked) {
-                view.func = func;
+                view.function = func;
             }
             b.addEventListener("click", () => {
-                view.func = func;
+                view.function = func;
             }, false);
         }
     });
