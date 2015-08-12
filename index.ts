@@ -17,8 +17,10 @@ window.addEventListener("DOMContentLoaded", () => {
             if (b.checked) {
                 view.function = func;
             }
-            b.addEventListener("click", () => {
-                view.function = func;
+            b.addEventListener("change", () => {
+                if (b.checked) {
+                    view.function = func;
+                }
             }, false);
         }
     });
