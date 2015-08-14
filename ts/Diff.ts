@@ -1,9 +1,17 @@
+/// <reference path="Complex.ts"/>
+
+/**
+ * A 1-jet of a curve.
+ */
 interface Diff<T>
 {
     value: T;
     diff: T;
 }
 
+/**
+ * Functions for 1-jets that are induced by the real functions.
+ */
 module DiffReal
 {
     export function constant(x: number): Diff<number>
@@ -37,6 +45,7 @@ module DiffReal
     export function div(x: Diff<number>, y: Diff<number>): Diff<number>
     {
         if (x.value === 0 && y.value === 0) {
+            // Use l'Hospital's rule
             return {value: x.diff / y.diff, diff: NaN};
         } else {
             return {value: x.value / y.value, diff: (x.diff * y.value - y.diff * x.value) / (y.value * y.value)};
@@ -48,6 +57,9 @@ module DiffReal
     }
 }
 
+/**
+ * Functions for 1-jets that are induced by the complex functions.
+ */
 module DiffComplex
 {
     export function constant(x: Complex): Diff<Complex>
@@ -99,6 +111,7 @@ module DiffComplex
     export function div(x: Diff<Complex>, y: Diff<Complex>): Diff<Complex>
     {
         if (Complex.equals(x.value, Complex.ZERO) && Complex.equals(y.value, Complex.ZERO)) {
+            // Use l'Hospital's rule
             return {value: Complex.div(x.diff, y.diff), diff: Complex.NAN};
         } else {
             return {value: Complex.div(x.value, y.value), diff: Complex.div(Complex.sub(Complex.mul(x.diff, y.value), Complex.mul(y.diff, x.value)), Complex.mul(y.value, y.value))};

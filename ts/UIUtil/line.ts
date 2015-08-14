@@ -10,6 +10,17 @@ module UIUtil
         bottom: number;
     }
 
+    /**
+     * Draws a line, optionally with an arrowhead.
+     * @param context  The rendering context on which to draw the line
+     * @param z0       The starting point
+     * @param z1       The end point
+     * @param arrow    Whether to draw an arrowhead
+     * @param rect     The boundary of the canvas
+     * @param extendS  Whether to extend the line beyond `z0`
+     * @param extendE  Whether to extend the line beyond `z1`
+     * @returns        The point at which the arrowhead would be drawn
+     */
     export function drawLine(context: CanvasRenderingContext2D, z0: Complex, z1: Complex, arrow: boolean, rect: Rect, extendS: boolean, extendE: boolean): Complex
     {
         let d = Complex.sub(z1, z0); // z1 - z0
