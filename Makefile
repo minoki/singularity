@@ -74,9 +74,6 @@ index.xhtml: index.xhtml.in strip-space.xsl
 index.js: $(tsfiles)
 	tsc --out $@ $(tscflags) $(maints)
 
-serve: all
-	lighttpd -D -f lighttpd.conf
-
 watch:
 	tsc --watch --out index.js $(tscflags) $(maints)
 
