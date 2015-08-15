@@ -1,10 +1,10 @@
 # Singularity Makefile
 
-maints= index.ts
+maints= main.ts
 
 # TypeScript sources
 tsfiles= \
- index.ts \
+ main.ts \
  ts/AffineTransform.ts \
  ts/AnalyticFunction.ts \
  ts/Complex.ts \
@@ -23,7 +23,7 @@ tsfiles= \
 files= \
  index.xhtml \
  style.css \
- index.min.js \
+ main.min.js \
  bower_components/rxjs/dist/rx.js \
  bower_components/rxjs/dist/rx.min.js \
  bower_components/rxjs/dist/rx.map \
@@ -71,15 +71,15 @@ install: $(installfiles)
 index.xhtml: index.xhtml.in strip-space.xsl
 	xsltproc --encoding UTF-8 -o $@ strip-space.xsl $<
 
-index.js: $(tsfiles)
+main.js: $(tsfiles)
 	tsc --out $@ $(tscflags) $(maints)
 
 watch:
-	tsc --watch --out index.js $(tscflags) $(maints)
+	tsc --watch --out main.js $(tscflags) $(maints)
 
-index.min.js index.js.map: index.js
-	$(closure-compiler) --language_in ECMASCRIPT5_STRICT --create_source_map index.js.map --js_output_file $@ --js $<
-	@echo "//# sourceMappingURL=index.js.map" >> $@
+main.min.js main.js.map: main.js
+	$(closure-compiler) --language_in ECMASCRIPT5_STRICT --create_source_map main.js.map --js_output_file $@ --js $<
+	@echo "//# sourceMappingURL=main.js.map" >> $@
 
 $(filter bower_components/%,$(files) $(tsfiles)):
 	bower update

@@ -1,7 +1,7 @@
 bower_components/
 typings/
-index.js
-index.js.map
-index.min.js
+main.js
+main.js.map
+main.min.js
 index.xhtml
 *.gz

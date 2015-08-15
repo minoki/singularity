@@ -4,7 +4,7 @@
     <title>たのしい複素積分</title>
     <script type="text/javascript" src="bower_components/es6-shim/es6-shim.min.js" defer="defer"/>
     <script type="text/javascript" src="bower_components/rxjs/dist/rx.min.js" defer="defer"/>
-    <script type="text/javascript" src="index.min.js" defer="defer"/>
+    <script type="text/javascript" src="main.min.js" defer="defer"/>
     <!-- script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=MML_HTMLorMML" defer="defer"></script -->
     <link rel="stylesheet" type="text/css" href="style.css"/>
     <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
