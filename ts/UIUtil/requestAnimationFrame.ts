@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2015 ARATA Mizuki
+ * This software is released under the MIT license.
+ * See LICENSE.txt.
+ */
+
 module UIUtil
 {
     interface RAFWithVendorPrefix extends Window {

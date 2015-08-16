@@ -1,4 +1,11 @@
+/*
+ * Copyright (c) 2015 ARATA Mizuki
+ * This software is released under the MIT license.
+ * See LICENSE.txt.
+ */
+
 /// <reference path="Complex.ts"/>
+
 function integrate(f: (t: number) => Complex, from: number, to: number, N: number = 100): Complex
 {
     let d = (to - from) / N;

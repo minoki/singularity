@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2015 ARATA Mizuki
+ * This software is released under the MIT license.
+ * See LICENSE.txt.
+ */
+
 /// <reference path="ComplexPlaneView.ts"/>
 /// <reference path="Curve.ts"/>
 /// <reference path="Integrate.ts"/>

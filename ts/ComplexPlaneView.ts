@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2015 ARATA Mizuki
+ * This software is released under the MIT license.
+ * See LICENSE.txt.
+ */
+
 /// <reference path="Complex.ts"/>
 /// <reference path="AffineTransform.ts"/>
 /// <reference path="UIUtil/pointer.ts"/>
