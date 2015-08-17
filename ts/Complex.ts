@@ -123,6 +123,12 @@ module Complex
     {
 	return {x: z.x*w.x-z.y*w.y, y: z.x*w.y+z.y*w.x};
     }
+    export function square(z: Complex): Complex
+    {
+        let x = z.x;
+        let y = z.y;
+        return {x: x*x-y*y, y: 2*x*y};
+    }
     export function mulK(a: number, z: Complex): Complex
     {
 	return {x: a * z.x, y: a*z.y};

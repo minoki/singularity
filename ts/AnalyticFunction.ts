@@ -16,8 +16,8 @@ interface AnalyticFunction
 
 var WellknownFunctions: {[name: string]: AnalyticFunction;} = {
     "z^2": {
-        value: z => Complex.mul(z, z),
-        diff: z => DiffComplex.mul(z, z),
+        value: Complex.square,
+        diff: DiffComplex.square,
         singularitiesIn: (realRange, imagRange) => []
     },
     "1/z": {
@@ -26,18 +26,18 @@ var WellknownFunctions: {[name: string]: AnalyticFunction;} = {
         singularitiesIn: (realRange, imagRange) => [Complex.ZERO]
     },
     "1/z^2": {
-        value: z => Complex.recip(Complex.mul(z, z)),
-        diff: z => DiffComplex.recip(DiffComplex.mul(z, z)),
+        value: z => Complex.recip(Complex.square(z)),
+        diff: z => DiffComplex.recip(DiffComplex.square(z)),
         singularitiesIn: (realRange, imagRange) => [Complex.ZERO]
     },
     "1/(z^2-1)": {
-        value: z => Complex.recip(Complex.sub(Complex.mul(z, z), Complex.ONE)),
-        diff: z => DiffComplex.recip(DiffComplex.sub(DiffComplex.mul(z, z), DiffComplex.ONE)),
+        value: z => Complex.recip(Complex.sub(Complex.square(z), Complex.ONE)),
+        diff: z => DiffComplex.recip(DiffComplex.sub(DiffComplex.square(z), DiffComplex.ONE)),
         singularitiesIn: (realRange, imagRange) => [Complex.ONE, Complex.MINUS_ONE]
     },
     "1/(z^3-1)": {
-        value: z => Complex.recip(Complex.sub(Complex.mul(z, Complex.mul(z, z)), Complex.ONE)),
-        diff: z => DiffComplex.recip(DiffComplex.sub(DiffComplex.mul(z, DiffComplex.mul(z, z)), DiffComplex.ONE)),
+        value: z => Complex.recip(Complex.sub(Complex.powi(z, 3), Complex.ONE)),
+        diff: z => DiffComplex.recip(DiffComplex.sub(DiffComplex.powi(z, 3), DiffComplex.ONE)),
         singularitiesIn: (realRange, imagRange) => [Complex.ONE, Complex.expi(2*Math.PI/3), Complex.expi(4*Math.PI/3)]
     },
     "exp(1/z)": {

@@ -127,6 +127,10 @@ module DiffComplex
     {
         return {value: Complex.recip(x.value), diff: Complex.div(Complex.negate(x.diff), Complex.mul(x.value, x.value))};
     }
+    export function square(z: Diff<Complex>): Diff<Complex>
+    {
+        return mul(z, z);
+    }
     export function mulK(x: Diff<number>, y: Diff<Complex>): Diff<Complex>
     {
         return {value: Complex.mulK(x.value, y.value), diff: Complex.add(Complex.mulK(x.value, y.diff), Complex.mulK(x.diff, y.value))};
@@ -139,6 +143,21 @@ module DiffComplex
     {
         let y = Complex.exp(x.value);
         return {value: y, diff: Complex.mul(y, x.diff)};
+    }
+    export function powi(z: Diff<Complex>, n: number): Diff<Complex>
+    {
+        if (n < 0) {
+            return recip(powi(z, -n));
+        }
+        let w = DiffComplex.ONE;
+        while (n !== 0) {
+            if ((n & 1) === 1) {
+                w = mul(w, z);
+            }
+            z = square(z);
+            n >>>= 1;
+        }
+        return w;
     }
     export function cos(x: Diff<Complex>): Diff<Complex>
     {
