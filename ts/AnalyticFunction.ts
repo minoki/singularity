@@ -62,12 +62,13 @@ var WellknownFunctions: {[name: string]: AnalyticFunction;} = {
         },
         singularitiesIn: (realRange, imagRange) => {
             // \{2k\pi i \mid k\in\mathbb{Z}, k\ne 0\}
-            let i = Math.floor(imagRange.min/(2*Math.PI));
-            let j = Math.ceil(imagRange.max/(2*Math.PI));
+            const DOUBLE_PI = 2*Math.PI;
+            let i = Math.floor(imagRange.min/DOUBLE_PI);
+            let j = Math.ceil(imagRange.max/DOUBLE_PI);
             let a: Complex[] = [];
             for (let k = i; k <= j; ++k) {
                 if (k !== 0) {
-                    a.push(Complex.fromImag(2*Math.PI*k));
+                    a.push(Complex.fromImag(DOUBLE_PI*k));
                 }
             }
             return a;
@@ -78,12 +79,13 @@ var WellknownFunctions: {[name: string]: AnalyticFunction;} = {
         diff: DiffComplex.tan,
         singularitiesIn: (realRange, imagRange) => {
             // \{(2k+1)\pi/2 i \mid k\in\mathbb{Z}\}
-            let i = Math.floor(realRange.min/(Math.PI/2));
-            let j = Math.ceil(realRange.max/(Math.PI/2));
+            const HALF_PI = Math.PI/2;
+            let i = Math.floor(realRange.min/HALF_PI);
+            let j = Math.ceil(realRange.max/HALF_PI);
             let a: Complex[] = [];
             for (let k = i; k <= j; ++k) {
                 if (k % 2 === 1 || k % 2 === -1) {
-                    a.push(Complex.fromReal(k*(Math.PI/2)));
+                    a.push(Complex.fromReal(k*HALF_PI));
                 }
             }
             return a;
