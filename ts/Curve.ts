@@ -7,16 +7,48 @@
 /// <reference path="Complex.ts"/>
 /// <reference path="Diff.ts"/>
 
+/**
+ * A \\(C^1\\)-curve in the complex plane.
+ */
 interface Curve
 {
+    /**
+     * The point for the parameter `t`.
+     * @param t  a real number between 0 and 1
+     */
     value(t: number): Complex;
+
+    /**
+     * The point and differential for the parameter `t`.
+     */
     diff(t: Diff<number>): Diff<Complex>;
+
+    /**
+     * Draws a curve on the given context, assuming the pen is at the starting point of this curve.
+     * @param context    The rendering context on which to draw the curve
+     * @param transform  an affine transformation
+     */
     drawPartial(context: CanvasRenderingContext2D, transform: (z: Complex) => Complex): void;
+
+    /**
+     * Draws a curve on the given context.
+     * @param context    The rendering context on which to draw the curve
+     * @param transform  an affine transformation
+     */
     draw(context: CanvasRenderingContext2D, transform: (z: Complex) => Complex): void;
 }
+
+/**
+ * A segment.
+ *
+ * This curve can be expressed as
+ * \\[
+ *   c(t) = (1-t) \langle\mathtt{start}\rangle
+ *          \+  t \langle\mathtt{end}\rangle.
+ * \\]
+ */
 class Segment implements Curve
 {
-    // (1-t) * start + t * end
     constructor(public start: Complex,
                 public end: Complex
                )
@@ -44,11 +76,27 @@ class Segment implements Curve
         context.lineTo(end.x, end.y);
     }
 }
+
+/**
+ * A quadratic bezier curve.
+ *
+ * This curve can be expressed as
+ * \begin{align\*}
+ *   c(t) &=      (1-t)^2 \langle\mathtt{start}\rangle
+ *           \+ 2 (1-t) t \langle\mathtt{controlPoint}\rangle
+ *           \+       t^2 \langle\mathtt{end}\rangle \\\\
+ *        &= (1-t) (
+ *             (1-t) \langle\mathtt{start}\rangle
+ *             \+  t \langle\mathtt{controlPoint}\rangle
+ *           )
+ *           \+ t (
+ *             (1-t) \langle\mathtt{controlPoint}\rangle
+ *             \+  t \langle\mathtt{end}\rangle
+ *           ).
+ * \end{align\*}
+ */
 class QuadraticBezierCurve implements Curve
 {
-    // (1-t)^2 * start + 2 * (1-t) * t * controlPoint + t^2 * end
-    // (1-t)^2 * start + (1-t) * t * controlPoint + (1-t) * t * controlPoint + t^2 * end
-    // (1-t) * ((1-t) * start + t * controlPoint) + t * ((1-t) * controlPoint + t * end)
     constructor(public start: Complex,
                 public controlPoint: Complex,
                 public end: Complex
@@ -58,12 +106,19 @@ class QuadraticBezierCurve implements Curve
     value(t: number): Complex
     {
         let u = 1 - t;
-        return Complex.linearCombination2(u, Complex.linearCombination2(u, this.start, t, this.controlPoint), t, Complex.linearCombination2(u, this.controlPoint, t, this.end));
+        let p1 = Complex.linearCombination2(u, this.start, t, this.controlPoint);
+        let p2 = Complex.linearCombination2(u, this.controlPoint, t, this.end);
+        return Complex.linearCombination2(u, p1, t, p2);
     }
     diff(t: Diff<number>): Diff<Complex>
     {
         let u = DiffReal.sub(DiffReal.ONE, t);
-        return DiffComplex.linearCombination2(u, DiffComplex.linearCombination2(u, DiffComplex.constant(this.start), t, DiffComplex.constant(this.controlPoint)), t, DiffComplex.linearCombination2(u, DiffComplex.constant(this.controlPoint), t, DiffComplex.constant(this.end)));
+        let start = DiffComplex.constant(this.start);
+        let controlPoint = DiffComplex.constant(this.controlPoint);
+        let end = DiffComplex.constant(this.end);
+        let p1 = DiffComplex.linearCombination2(u, start, t, controlPoint);
+        let p2 = DiffComplex.linearCombination2(u, controlPoint, t, end);
+        return DiffComplex.linearCombination2(u, p1, t, p2);
     }
     drawPartial(context: CanvasRenderingContext2D, transform: (z: Complex) => Complex)
     {
@@ -80,30 +135,60 @@ class QuadraticBezierCurve implements Curve
         context.quadraticCurveTo(controlPoint.x, controlPoint.y, end.x, end.y);
     }
 }
+
+/**
+ * A quadratic bezier curve.
+ *
+ * This curve can be expressed as
+ * \begin{align\*}
+ *   c(t) &=        (1-t)^3 \langle\mathtt{start}\rangle
+ *           \+ 3 (1-t)^2 t \langle\mathtt{controlPoint1}\rangle
+ *           \+ 3 (1-t) t^2 \langle\mathtt{controlPoint2}\rangle
+ *           \+         t^3 \langle\mathtt{end}\rangle \\\\
+ *        &= (1-t) (
+ *                  (1-t)^2 \langle\mathtt{start}\rangle
+ *             \+ 2 (1-t) t \langle\mathtt{controlPoint1}\rangle
+ *             \+       t^2 \langle\mathtt{controlPoint2}\rangle
+ *           ) \\\\
+ *    &\quad \+ t (
+ *                   (1-t)^2 \langle\mathtt{controlPoint1}\rangle
+ *              \+ 2 (1-t) t \langle\mathtt{controlPoint2}\rangle
+ *              \+       t^2 \langle\mathtt{end}\rangle
+ *           ).
+ * \end{align\*}
+ */
 class CubicBezierCurve implements Curve
 {
-    // (1-t)^3 * start + 3 * (1-t)^2 * t * controlPoint1 + 3 * (1-t)^2 * t * controlPoint2 + t^3 * end
-    // (1-t) * ((1-t)^2 * start + 2 * (1-t) * t * controlPoint1 + t^2 * controlPoint2) + t * ((1-t)^2 * controlPoint1 + 2 * (1-t) * t * controlPoint2 + t^2 * end)
-    private part1: QuadraticBezierCurve;
-    private part2: QuadraticBezierCurve;
     constructor(public start: Complex,
                 public controlPoint1: Complex,
                 public controlPoint2: Complex,
                 public end: Complex
                )
     {
-        this.part1 = new QuadraticBezierCurve(start, controlPoint1, controlPoint2);
-        this.part2 = new QuadraticBezierCurve(controlPoint1, controlPoint2, end);
     }
     value(t: number): Complex
     {
         let u = 1 - t;
-        return Complex.linearCombination2(u, this.part1.value(t), t, this.part2.value(t));
+        let p1 = Complex.linearCombination2(u, this.start, t, this.controlPoint1);
+        let p2 = Complex.linearCombination2(u, this.controlPoint1, t, this.controlPoint2);
+        let p3 = Complex.linearCombination2(u, this.controlPoint2, t, this.end);
+        let q1 = Complex.linearCombination2(u, p1, t, p2);
+        let q2 = Complex.linearCombination2(u, p2, t, p3);
+        return Complex.linearCombination2(u, q1, t, q2);
     }
     diff(t: Diff<number>): Diff<Complex>
     {
         let u = DiffReal.sub(DiffReal.ONE, t);
-        return DiffComplex.linearCombination2(u, this.part1.diff(t), t, this.part2.diff(t));
+        let start = DiffComplex.constant(this.start);
+        let controlPoint1 = DiffComplex.constant(this.controlPoint1);
+        let controlPoint2 = DiffComplex.constant(this.controlPoint2);
+        let end = DiffComplex.constant(this.end);
+        let p1 = DiffComplex.linearCombination2(u, start, t, controlPoint1);
+        let p2 = DiffComplex.linearCombination2(u, controlPoint1, t, controlPoint2);
+        let p3 = DiffComplex.linearCombination2(u, controlPoint2, t, end);
+        let q1 = DiffComplex.linearCombination2(u, p1, t, p2);
+        let q2 = DiffComplex.linearCombination2(u, p2, t, p3);
+        return DiffComplex.linearCombination2(u, q1, t, q2);
     }
     drawPartial(context: CanvasRenderingContext2D, transform: (z: Complex) => Complex)
     {
@@ -122,11 +207,18 @@ class CubicBezierCurve implements Curve
         context.bezierCurveTo(controlPoint1.x, controlPoint1.y, controlPoint2.x, controlPoint2.y, end.x, end.y);
     }
 }
+
+/**
+ * A spline curve consists of \\(N\\) components \\(c\_0,\dots,c\_{N-1}\\).
+ * These components must satisfy \\(c\_k(1)=c_{k+1}(0)\\) and \\(c\_k'(1)=c\_{k+1}'(0)\\).
+ *
+ * This curve can be expressed as
+ * \\[
+ *   c(t) = c\_k(Nt-k) \quad \left(\frac{k}{N} \le t \le \frac{k+1}{N}\right).
+ * \\]
+ */
 class SplineCurve implements Curve
 {
-    /*
-     * c(t) = c_k((t-k)
-     */
     constructor(public components: Curve[])
     {
     }
@@ -165,6 +257,7 @@ class SplineCurve implements Curve
         });
     }
 }
+
 class CatmullRomSplineCurve extends SplineCurve
 {
     constructor(p: Complex[])
@@ -197,6 +290,7 @@ class CatmullRomSplineCurve extends SplineCurve
         }
     }
 }
+
 class ClosedCatmullRomSplineCurve extends SplineCurve
 {
     constructor(p: Complex[])
@@ -219,67 +313,3 @@ class ClosedCatmullRomSplineCurve extends SplineCurve
         }
     }
 }
-/*
-window.addEventListener("load", () => {
-    let c = <HTMLCanvasElement>document.getElementById("c");
-    let ratio = window.devicePixelRatio;
-    {
-        let rect = c.getBoundingClientRect();
-        c.width = rect.width * ratio;
-        c.height = rect.height * ratio;
-    }
-    let context = c.getContext("2d");
-    let points: Point[] = [];
-    let draw = () => {
-        context.save();
-        context.clearRect(0, 0, c.width, c.height);
-        context.scale(ratio, ratio);
-        if (points.length > 1) {
-            context.beginPath();
-            context.moveTo(points[0].x, points[0].y);
-            for (let i = 1; i < points.length; ++i) {
-                context.lineTo(points[i].x, points[i].y);
-            }
-            context.lineWidth = 6;
-            context.strokeStyle = "#ccf";
-            context.stroke();
-        }
-        context.beginPath();
-        drawSpline(context, points);
-        context.lineWidth = 6;
-        context.strokeStyle = "navy";
-        context.stroke();
-        points.forEach(p => {
-            context.fillStyle = "white";
-            context.beginPath();
-            context.arc(p.x, p.y, 2, 0, 2*Math.PI);
-            context.fill();
-        });
-        context.restore();
-    };
-    let drawing = false;
-    c.addEventListener("mousedown", event => {
-        let rect = c.getBoundingClientRect();
-        let x = event.clientX - rect.left;
-        let y = event.clientY - rect.top;
-        points = [{x,y}];
-        drawing = true;
-        draw();
-    }, false);
-    c.addEventListener("mousemove", event => {
-        if (drawing) {
-            let rect = c.getBoundingClientRect();
-            let x = event.clientX - rect.left;
-            let y = event.clientY - rect.top;
-            points.push({x,y});
-            draw();
-        }
-    }, false);
-    c.addEventListener("mouseup", event => {
-        let rect = c.getBoundingClientRect();
-        let x = event.clientX - rect.left;
-        let y = event.clientY - rect.top;
-        drawing = false;
-    }, false);
-}, false);
-*/
