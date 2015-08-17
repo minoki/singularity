@@ -68,11 +68,29 @@ module DiffReal
  */
 module DiffComplex
 {
+    const Complex_ZERO = Complex.ZERO;
+    const Complex_fromReal = Complex.fromReal;
+    const Complex_realPart = Complex.realPart;
+    const Complex_imagPart = Complex.imagPart;
+    const Complex_conjugate = Complex.conjugate;
+    const Complex_add = Complex.add;
+    const Complex_negate = Complex.negate;
+    const Complex_sub = Complex.sub;
+    const Complex_mul = Complex.mul;
+    const Complex_recip = Complex.recip;
+    const Complex_div = Complex.div;
+    const Complex_square = Complex.square;
+    const Complex_mulK = Complex.mulK;
+    const Complex_exp = Complex.exp;
+    const Complex_cos = Complex.cos;
+    const Complex_sin = Complex.sin;
+    const Complex_tan = Complex.tan;
+
     export function constant(x: Complex): Diff<Complex>
     {
-        return {value: x, diff: Complex.ZERO};
+        return {value: x, diff: Complex_ZERO};
     }
-    export const ZERO = constant(Complex.ZERO);
+    export const ZERO = constant(Complex_ZERO);
     export const ONE = constant(Complex.ONE);
     export const MINUS_ONE = constant(Complex.MINUS_ONE);
     export const I = constant(Complex.I);
@@ -84,48 +102,48 @@ module DiffComplex
     }
     export function fromReal(x: Diff<number>): Diff<Complex>
     {
-        return {value: Complex.fromReal(x.value), diff: Complex.fromReal(x.diff)};
+        return {value: Complex_fromReal(x.value), diff: Complex_fromReal(x.diff)};
     }
     export function realPart(z: Diff<Complex>): Diff<number>
     {
-        return {value: Complex.realPart(z.value), diff: Complex.realPart(z.diff)};
+        return {value: Complex_realPart(z.value), diff: Complex_realPart(z.diff)};
     }
     export function imagPart(z: Diff<Complex>): Diff<number>
     {
-        return {value: Complex.imagPart(z.value), diff: Complex.imagPart(z.diff)};
+        return {value: Complex_imagPart(z.value), diff: Complex_imagPart(z.diff)};
     }
     export function conjugate(z: Diff<Complex>): Diff<Complex>
     {
-        return {value: Complex.conjugate(z.value), diff: Complex.conjugate(z.diff)};
+        return {value: Complex_conjugate(z.value), diff: Complex_conjugate(z.diff)};
     }
     export function add(x: Diff<Complex>, y: Diff<Complex>): Diff<Complex>
     {
-        return {value: Complex.add(x.value, y.value), diff: Complex.add(x.diff, y.diff)};
+        return {value: Complex_add(x.value, y.value), diff: Complex_add(x.diff, y.diff)};
     }
     export function negate(x: Diff<Complex>): Diff<Complex>
     {
-        return {value: Complex.negate(x.value), diff: Complex.negate(x.diff)};
+        return {value: Complex_negate(x.value), diff: Complex_negate(x.diff)};
     }
     export function sub(x: Diff<Complex>, y: Diff<Complex>): Diff<Complex>
     {
-        return {value: Complex.sub(x.value, y.value), diff: Complex.sub(x.diff, y.diff)};
+        return {value: Complex_sub(x.value, y.value), diff: Complex_sub(x.diff, y.diff)};
     }
     export function mul(x: Diff<Complex>, y: Diff<Complex>): Diff<Complex>
     {
-        return {value: Complex.mul(x.value, y.value), diff: Complex.add(Complex.mul(x.value, y.diff), Complex.mul(y.value, x.diff))};
+        return {value: Complex_mul(x.value, y.value), diff: Complex_add(Complex_mul(x.value, y.diff), Complex_mul(y.value, x.diff))};
     }
     export function div(x: Diff<Complex>, y: Diff<Complex>): Diff<Complex>
     {
         if (Complex.equals(x.value, Complex.ZERO) && Complex.equals(y.value, Complex.ZERO)) {
             // Use l'Hospital's rule
-            return {value: Complex.div(x.diff, y.diff), diff: Complex.NAN};
+            return {value: Complex_div(x.diff, y.diff), diff: Complex.NAN};
         } else {
-            return {value: Complex.div(x.value, y.value), diff: Complex.div(Complex.sub(Complex.mul(x.diff, y.value), Complex.mul(y.diff, x.value)), Complex.mul(y.value, y.value))};
+            return {value: Complex_div(x.value, y.value), diff: Complex_div(Complex_sub(Complex_mul(x.diff, y.value), Complex_mul(y.diff, x.value)), Complex_square(y.value))};
         }
     }
     export function recip(x: Diff<Complex>): Diff<Complex>
     {
-        return {value: Complex.recip(x.value), diff: Complex.div(Complex.negate(x.diff), Complex.mul(x.value, x.value))};
+        return {value: Complex_recip(x.value), diff: Complex_div(Complex_negate(x.diff), Complex_square(x.value))};
     }
     export function square(z: Diff<Complex>): Diff<Complex>
     {
@@ -133,7 +151,7 @@ module DiffComplex
     }
     export function mulK(x: Diff<number>, y: Diff<Complex>): Diff<Complex>
     {
-        return {value: Complex.mulK(x.value, y.value), diff: Complex.add(Complex.mulK(x.value, y.diff), Complex.mulK(x.diff, y.value))};
+        return {value: Complex_mulK(x.value, y.value), diff: Complex_add(Complex_mulK(x.value, y.diff), Complex_mulK(x.diff, y.value))};
     }
     export function linearCombination2(a: Diff<number>, z: Diff<Complex>, b: Diff<number>, w: Diff<Complex>): Diff<Complex>
     {
@@ -141,8 +159,8 @@ module DiffComplex
     }
     export function exp(x: Diff<Complex>): Diff<Complex>
     {
-        let y = Complex.exp(x.value);
-        return {value: y, diff: Complex.mul(y, x.diff)};
+        let y = Complex_exp(x.value);
+        return {value: y, diff: Complex_mul(y, x.diff)};
     }
     export function powi(z: Diff<Complex>, n: number): Diff<Complex>
     {
@@ -161,15 +179,14 @@ module DiffComplex
     }
     export function cos(x: Diff<Complex>): Diff<Complex>
     {
-        return {value: Complex.cos(x.value), diff: Complex.mul(Complex.negate(Complex.sin(x.value)), x.diff)};
+        return {value: Complex_cos(x.value), diff: Complex_mul(Complex_negate(Complex_sin(x.value)), x.diff)};
     }
     export function sin(x: Diff<Complex>): Diff<Complex>
     {
-        return {value: Complex.sin(x.value), diff: Complex.mul(Complex.cos(x.value), x.diff)};
+        return {value: Complex_sin(x.value), diff: Complex_mul(Complex_cos(x.value), x.diff)};
     }
     export function tan(x: Diff<Complex>): Diff<Complex>
     {
-        let c = Complex.cos(x.value);
-        return {value: Complex.tan(x.value), diff: Complex.div(x.diff, Complex.mul(c, c))};
+        return {value: Complex_tan(x.value), diff: Complex_div(x.diff, Complex_square(Complex_cos(x.value)))};
     }
 }
