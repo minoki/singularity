@@ -7,7 +7,7 @@
     <script type="text/javascript" src="main.min.js" defer="defer"/>
     <!-- script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=MML_HTMLorMML" defer="defer"></script -->
     <link rel="stylesheet" type="text/css" href="style.css"/>
-    <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta name="viewport" content="initial-scale=1.0"/>
   </head>
   <body>
     <div id="content">
