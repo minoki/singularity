@@ -38,6 +38,8 @@
       .dynamic-math-wrapper.ready { display: block; }
       .dynamic-math-wrapper.ready + math { display: none !important; }
       .dynamic-math-wrapper.ready + m|math { display: none !important; }
+      #browser-message { display: none; }
+      .using-mathjax #browser-message { display: block; }
     </style>
     <meta name="viewport" content="initial-scale=1.0"/>
   </head>
@@ -161,6 +163,12 @@
         </math>
       </div>
       <p style="clear:left;">[+], [-]キーを使って拡大・縮小ができます。[0]キーで原点を中心に、[n]キーで虚軸を真上の方向にできます。</p>
+      <p id="browser-message">このページを表示するのにオススメのブラウザは<a href="https://www.mozilla.org/ja/firefox/new/" target="_blank">Mozilla Firefox</a>です。</p>
     </div>
+    <script type="text/javascript">
+      if (USE_MATHJAX_FOR_DYNAMIC_MATH) {
+        document.body.classList.add("using-mathjax");
+      }
+    </script>
   </body>
 </html>
