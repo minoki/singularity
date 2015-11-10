@@ -87,9 +87,9 @@ class ComplexPlaneView
         return this.doHandlePointerEvent(x, y);
     }
 
-    private onKeyPress(event: KeyboardEvent)
+    keyCommand(char: string)
     {
-        switch (String.fromCharCode(event.charCode)) {
+        switch (char) {
         case '+':
             this.coord = ComplexAffineTransform.fromScale(Complex.fromReal(1.1)).composite(this.coord);
             break;
@@ -103,6 +103,11 @@ class ComplexPlaneView
             this.coord = ComplexAffineTransform.fromScale(Complex.normalize(Complex.conjugate(this.coord.scale))).composite(this.coord);
             break;
         }
+    }
+
+    private onKeyPress(event: KeyboardEvent)
+    {
+        this.keyCommand(String.fromCharCode(event.charCode));
     }
 
     private onWheel(event: WheelEvent)

@@ -26,3 +26,9 @@ body {
   margin: 0 1ex;
   min-width: 6em;
 }
+a.key-command {
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}

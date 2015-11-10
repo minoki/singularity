@@ -30,4 +30,10 @@ window.addEventListener("DOMContentLoaded", () => {
             }, false);
         }
     });
+    let keyCommandButtons: HTMLAnchorElement[] = Array.prototype.filter.call(document.getElementsByClassName("key-command"), (a: HTMLElement) => (a.tagName === "a" && a.accessKey));
+    keyCommandButtons.forEach(a => {
+        a.addEventListener("click", event => {
+            view.keyCommand(a.accessKey);
+        }, false);
+    });
 }, false);

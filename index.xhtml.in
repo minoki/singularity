@@ -162,7 +162,7 @@
           </semantics>
         </math>
       </div>
-      <p style="clear:left;">[+], [-]キーを使って拡大・縮小ができます。[0]キーで原点を中心に、[n]キーで虚軸を真上の方向にできます。</p>
+      <p style="clear:left;"><a class="key-command" accesskey="+">[+]</a>, <a class="key-command" accesskey="-">[-]</a>キーを使って拡大・縮小ができます。<a class="key-command" accesskey="0">[0]</a>キーで原点を中心に、<a class="key-command" accesskey="n">[n]</a>キーで虚軸を真上の方向にできます。</p>
       <p id="browser-message">このページを表示するのにオススメのブラウザは<a href="https://www.mozilla.org/ja/firefox/new/" target="_blank">Mozilla Firefox</a>です。</p>
     </div>
     <script type="text/javascript">
