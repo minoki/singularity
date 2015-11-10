@@ -381,9 +381,7 @@ class ComplexPlaneView
     }
     private pointerAction2(o1: PointerWatch, o2: PointerWatch): Rx.IDisposable
     {
-        return o1.source.zip(o2.source, (p1, p2) => [p1, p2]).subscribe(p => {
-            let p1 = p[0];
-            let p2 = p[1];
+        return o1.source.zip(o2.source, (p1, p2) => [p1, p2]).subscribe(([p1, p2]) => {
             this.coord = ComplexAffineTransform.fromPoints(o1.init, p1, o2.init, p2);
         });
     }
