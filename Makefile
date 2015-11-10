@@ -25,6 +25,8 @@ files= \
  style.css \
  main.js \
  main.min.js \
+ dynmml.js \
+ dynmml.min.js \
  bower_components/rxjs/dist/rx.js \
  bower_components/rxjs/dist/rx.min.js \
  bower_components/rxjs/dist/rx.map \
@@ -75,12 +77,19 @@ index.xhtml: index.xhtml.in strip-space.xsl
 main.js: $(tsfiles)
 	tsc --out $@ $(tscflags) $(maints)
 
+dynmml.js: dynmml.ts
+	tsc --out $@ $(tscflags) $<
+
 watch:
 	tsc --watch --out main.js $(tscflags) $(maints)
 
 main.min.js main.js.map: main.js
 	$(closure-compiler) --language_in ECMASCRIPT5_STRICT --create_source_map main.js.map --js_output_file $@ --js $<
 	@echo "//# sourceMappingURL=main.js.map" >> $@
+
+dynmml.min.js dynmml.js.map: dynmml.js
+	$(closure-compiler) --language_in ECMASCRIPT5_STRICT --create_source_map dynmml.js.map --js_output_file $@ --js $<
+	@echo "//# sourceMappingURL=dynmml.js.map" >> $@
 
 $(filter bower_components/%,$(files) $(tsfiles)):
 	bower update

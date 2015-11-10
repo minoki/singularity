@@ -5,8 +5,40 @@
     <script type="text/javascript" src="bower_components/es6-shim/es6-shim.min.js" defer="defer"/>
     <script type="text/javascript" src="bower_components/rxjs/dist/rx.min.js" defer="defer"/>
     <script type="text/javascript" src="main.min.js" defer="defer"/>
-    <!-- script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=MML_HTMLorMML" defer="defer"></script -->
+    <script type="text/javascript" src="dynmml.min.js" defer="defer"/>
+    <script type="text/x-mathjax-config"><![CDATA[
+      MathJax.Hub.Config({
+        /*delayStartupUntil: "configured",*/
+        /*skipStartupTypeset: false,*/
+        elements: ["function-choice"],
+        "CHTML-preview": { disabled: true }
+      });
+    ]]></script>
+    <script type="text/javascript"><![CDATA[
+      // Firefox (Gecko): Always use native MathML rendering.
+      // Safari (WebKit): Use MathJax for static formuals, but use native MathML rendering for dynamic formuals.
+      // Other: Always use MathJax.
+      var USE_MATHJAX_FOR_DYNAMIC_MATH = false;
+      (function(ua){
+          var isGecko = ua.indexOf("Gecko") > -1 && ua.indexOf("KHTML") === -1 && ua.indexOf('Trident') === -1;
+          var isWebKit = ua.indexOf('AppleWebKit') > -1 && ua.indexOf('Chrome') === -1;
+          if (!isGecko) {
+              var script = document.createElement("script");
+              script.type = "text/javascript";
+              script.src  = "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=MML_HTMLorMML";
+              document.getElementsByTagName("head")[0].appendChild(script);
+              USE_MATHJAX_FOR_DYNAMIC_MATH = !isWebKit;
+          }
+      }(navigator.userAgent));
+    ]]></script>
     <link rel="stylesheet" type="text/css" href="style.css"/>
+    <style type="text/css">
+      @namespace m url('http://www.w3.org/1998/Math/MathML');
+      .dynamic-math-wrapper { display: none; }
+      .dynamic-math-wrapper.ready { display: block; }
+      .dynamic-math-wrapper.ready + math { display: none !important; }
+      .dynamic-math-wrapper.ready + m|math { display: none !important; }
+    </style>
     <meta name="viewport" content="initial-scale=1.0"/>
   </head>
   <body>
@@ -64,7 +96,7 @@
         <label><input type="radio" name="mode" id="mode-scroll" />スクロール</label>
       </div>
       <canvas id="plane" tabindex="0" />
-      <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+      <math display="block" xmlns="http://www.w3.org/1998/Math/MathML" class="dynamic-math">
         <semantics>
           <mrow>
             <mrow>
@@ -91,7 +123,7 @@
         </semantics>
       </math>
       <p>
-        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML" class="dynamic-math">
           <semantics>
             <mrow>
               <mrow>

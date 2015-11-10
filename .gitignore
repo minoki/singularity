@@ -3,5 +3,8 @@ typings/
 main.js
 main.js.map
 main.min.js
+dynmml.js
+dynmml.js.map
+dynmml.min.js
 index.xhtml
 *.gz
