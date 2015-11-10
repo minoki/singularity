@@ -96,33 +96,33 @@
         <label><input type="radio" name="mode" id="mode-scroll" />スクロール</label>
       </div>
       <canvas id="plane" tabindex="0" />
-      <math display="block" xmlns="http://www.w3.org/1998/Math/MathML" class="dynamic-math">
-        <semantics>
-          <mrow>
+      <div>
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML" class="dynamic-math">
+          <semantics>
             <mrow>
-              <msub>
-                <mo>∫</mo>
-                <mi>γ</mi>
-              </msub>
               <mrow>
-                <mi>f</mi>
-                <mo stretchy="false" form="prefix">(</mo>
-                <mi>z</mi>
-                <mo stretchy="false" form="postfix">)</mo>
+                <msub>
+                  <mo>∫</mo>
+                  <mi>γ</mi>
+                </msub>
+                <mrow>
+                  <mi>f</mi>
+                  <mo stretchy="false" form="prefix">(</mo>
+                  <mi>z</mi>
+                  <mo stretchy="false" form="postfix">)</mo>
+                </mrow>
+                <mrow>
+                  <mi>d</mi>
+                  <mi>z</mi>
+                </mrow>
               </mrow>
-              <mrow>
-                <mi>d</mi>
-                <mi>z</mi>
+              <mo>=</mo>
+              <mrow id="value1">
               </mrow>
             </mrow>
-            <mo>=</mo>
-            <mrow id="value1">
-            </mrow>
-          </mrow>
-          <annotation encoding="application/x-tex" id="annotation1">\int_\gamma f(z)dz=###</annotation>
-        </semantics>
-      </math>
-      <p>
+            <annotation encoding="application/x-tex" id="annotation1">\int_\gamma f(z)dz=###</annotation>
+          </semantics>
+        </math>
         <math display="block" xmlns="http://www.w3.org/1998/Math/MathML" class="dynamic-math">
           <semantics>
             <mrow>
@@ -159,7 +159,7 @@
             <annotation encoding="application/x-tex" id="annotation2">\frac{1}{2\pi i}\int_\gamma f(z)dz=###</annotation>
           </semantics>
         </math>
-      </p>
+      </div>
       <p style="clear:left;">[+], [-]キーを使って拡大・縮小ができます。[0]キーで原点を中心に、[n]キーで虚軸を真上の方向にできます。</p>
     </div>
   </body>
