@@ -23,6 +23,7 @@ tsfiles= \
 files= \
  index.xhtml \
  style.css \
+ main.js \
  main.min.js \
  bower_components/rxjs/dist/rx.js \
  bower_components/rxjs/dist/rx.min.js \
