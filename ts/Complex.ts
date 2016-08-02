@@ -14,6 +14,8 @@ module Complex
 {
     const Number_isNaN = Number.isNaN;
     const Number_isFinite = Number.isFinite;
+    const Math_sign = Math.sign;
+    const Math_abs = Math.abs;
     const Math_exp = Math.exp;
     const Math_expm1 = Math.expm1;
     const Math_log = Math.log;
@@ -25,11 +27,11 @@ module Complex
 
     export function fromReal(x: number)
     {
-	return {x, y: 0};
+        return {x, y: 0};
     }
     export function fromImag(y: number)
     {
-	return {x: 0, y};
+        return {x: 0, y};
     }
     export function from(x: number, y: number)
     {
@@ -105,23 +107,23 @@ module Complex
     }
     export function negateRecip(z: Complex): Complex
     {
-	let x = z.x;
-	let y = z.y;
-	let m = 1/(x*x+y*y);
-	return {x: -x*m, y: y*m};
+        let x = z.x;
+        let y = z.y;
+        let m = 1/(x*x+y*y);
+        return {x: -x*m, y: y*m};
     }
 
     export function add(z: Complex, w: Complex): Complex
     {
-	return {x: z.x + w.x, y: z.y + w.y};
+        return {x: z.x + w.x, y: z.y + w.y};
     }
     export function sub(z: Complex, w: Complex): Complex
     {
-	return {x: z.x - w.x, y: z.y - w.y};
+        return {x: z.x - w.x, y: z.y - w.y};
     }
     export function mul(z: Complex, w: Complex): Complex
     {
-	return {x: z.x*w.x-z.y*w.y, y: z.x*w.y+z.y*w.x};
+        return {x: z.x*w.x-z.y*w.y, y: z.x*w.y+z.y*w.x};
     }
     export function square(z: Complex): Complex
     {
@@ -131,13 +133,13 @@ module Complex
     }
     export function mulK(a: number, z: Complex): Complex
     {
-	return {x: a * z.x, y: a*z.y};
+        return {x: a * z.x, y: a*z.y};
     }
     export function mulPI(b: number, z: Complex): Complex
     {
         // Re(bi * z) = -b * Im(z)
         // Im(bi * z) = b * Re(z)
-	return {x: -b*z.y, y: b*z.x};
+        return {x: -b*z.y, y: b*z.x};
     }
     export function linearCombination2(a: number, z: Complex, b: number, w: Complex): Complex
     {
@@ -145,40 +147,52 @@ module Complex
     }
     export function div(z: Complex, w: Complex): Complex
     {
-	let x = z.x;
-	let y = z.y;
-	let o_x = w.x;
-	let o_y = w.y;
-	let o_m = 1/(o_x*o_x+o_y*o_y);
+        let x = z.x;
+        let y = z.y;
+        let o_x = w.x;
+        let o_y = w.y;
+        let o_m = 1/(o_x*o_x+o_y*o_y);
         if (o_m === Infinity && (x !== 0 || y !== 0)) {
             return {x: Infinity, y: Infinity};
         } else {
-	    return {x: (x*o_x+y*o_y)*o_m, y: (-x*o_y+y*o_x)*o_m};
+            return {x: (x*o_x+y*o_y)*o_m, y: (-x*o_y+y*o_x)*o_m};
         }
     }
 
     // Complex functions
     export function exp(z: Complex): Complex
     {
-	let m = Math_exp(z.x);
-	let c = Math_cos(z.y);
-	let s = Math_sin(z.y);
-	return {x: m*c, y: m*s};
+        let m = Math_exp(z.x);
+        let c = Math_cos(z.y);
+        let s = Math_sin(z.y);
+        return {x: m*c, y: m*s};
     }
     export function expi(t: number): Complex
     {
-	let c = Math_cos(t);
-	let s = Math_sin(t);
-	return {x: c, y: s};
+        let c = Math_cos(t);
+        let s = Math_sin(t);
+        return {x: c, y: s};
     }
     export function log(z: Complex): Complex
     {
-	return {x: Math_log(Math_hypot(z.x, z.y)), y: Math_atan2(z.y, z.x)};
+        return {x: Math_log(Math_hypot(z.x, z.y)), y: Math_atan2(z.y, z.x)};
     }
+    /* Branch cut: the negative real axis */
     export function sqrt(z: Complex): Complex
     {
-	let t = Math_sqrt((z.x + Math_hypot(z.x, z.y)) * 2);
-	return t === 0 ? ZERO : {x: t/2, y: z.y/t};
+        let a = Math_hypot(z.x, z.y);
+        if (a === 0) {
+            return ZERO;
+        } else {
+            if (z.x >= 0) {
+                let t = Math_sqrt((z.x + a) * 2);
+                return {x: t / 2, y: z.y / t};
+            } else { /* z.x < 0 */
+                let u = Math_sqrt((a - z.x) * 2);
+                let sign = Math_sign(z.y) | Math_sign(1 / z.y);
+                return {x: Math_abs(z.y) / u, y: sign * u * 0.5};
+            }
+        }
     }
     export function cos(z: Complex): Complex
     {
@@ -211,14 +225,29 @@ module Complex
     }
     export function acos(z: Complex): Complex
     {
-        let t0 = z.x*z.x-z.y*z.y-1;
-        let t1 = 2*z.x*z.y;
-        let t2 = Math_sqrt(2*(t0+Math_hypot(t0,t1)));
-        let t3 = z.x+t2*0.5;
-        let t4 = z.y+t1/t2;
-        let t5 = Math_log(Math_hypot(t3,t4));
-        let t6 = Math_atan2(t4,t3);
-        return {x: t6, y: -t5};
+        /* -i * log(z + i * sqrt(1 - z * z)) */
+        let x = z.x;
+        let y = z.y;
+        let bx = x, by = y;
+        {
+            // bx + i * by = z + i * sqrt(1 - z * z)
+            let mx = 1 - x * x + y * y;
+            let my = - 2 * x * y;
+            let a = Math_hypot(mx, my);
+            if (a !== 0) {
+                if (mx >= 0) {
+                    let t = Math_sqrt((mx + a) * 2);
+                    by += t / 2;
+                    bx -= my / t;
+                } else { /* mx < 0 */
+                    let u = Math_sqrt((a - mx) * 2);
+                    let sign = Math_sign(my) | Math_sign(1 / my);
+                    by += Math_abs(my) / u;
+                    bx -= sign * u * 0.5;
+                }
+            }
+        }
+        return {x: Math.atan2(by, bx), y: -Math.log(Math.hypot(bx, by))};
     }
     export function asin(z: Complex): Complex
     {
@@ -273,12 +302,29 @@ module Complex
     }
     export function acosh(z: Complex): Complex
     {
-        let t0 = z.x*z.x-z.y*z.y-1.0;
-        let t1 = 2*z.x*z.y;
-        let t2 = Math_sqrt((t0+Math_hypot(t0,t1))*2.0);
-        let t3 = z.x+t2*0.5;
-        let t4 = z.y+t1/t2;
-        return {x: Math_log(Math_hypot(t3,t4)), y: Math_atan2(t4,t3)};
+        let x = z.x;
+        let y = z.y;
+        let bx = x, by = y;
+        {
+            // bx + i * by = z + i * sqrt(1 - z * z)
+            let mx = 1 - x * x + y * y;
+            let my = - 2 * x * y;
+            let a = Math_hypot(mx, my);
+            let sy = Math_sign(y) | Math_sign(1 / y);
+            if (a !== 0) {
+                if (mx >= 0) {
+                    let t = Math_sqrt((mx + a) * 2);
+                    by += sy * t / 2;
+                    bx -= sy * my / t;
+                } else { /* mx < 0 */
+                    let u = Math_sqrt((a - mx) * 2);
+                    let sign = Math_sign(my) | Math_sign(1 / my);
+                    by += sy * Math_abs(my) / u;
+                    bx -= sy * sign * u * 0.5;
+                }
+            }
+        }
+        return {x: Math_log(Math_hypot(bx, by)), y: Math_atan2(by, bx)};
     }
     export function asinh(z: Complex): Complex
     {
@@ -300,11 +346,11 @@ module Complex
     }
     export function pow(z: Complex, w: Complex): Complex
     {
-	return exp(mul(log(z), w));
+        return exp(mul(log(z), w));
     }
     export function powi(z: Complex, n: number): Complex
     {
-	return powzi(z.x, z.y, n);
+        return powzi(z.x, z.y, n);
     }
     export function powzi(x: number, y: number, n: number): Complex
     {
