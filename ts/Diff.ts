@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 ARATA Mizuki
+ * Copyright (c) 2016 ARATA Mizuki
  * This software is released under the MIT license.
  * See LICENSE.txt.
  */
@@ -70,6 +70,7 @@ module DiffComplex
 {
     const Complex_ZERO = Complex.ZERO;
     const Complex_fromReal = Complex.fromReal;
+    const Complex_fromImag = Complex.fromImag;
     const Complex_realPart = Complex.realPart;
     const Complex_imagPart = Complex.imagPart;
     const Complex_conjugate = Complex.conjugate;
@@ -81,7 +82,10 @@ module DiffComplex
     const Complex_div = Complex.div;
     const Complex_square = Complex.square;
     const Complex_mulK = Complex.mulK;
+    const Complex_mulPI = Complex.mulPI;
     const Complex_exp = Complex.exp;
+    const Complex_log = Complex.log;
+    const Complex_sqrt = Complex.sqrt;
     const Complex_cos = Complex.cos;
     const Complex_sin = Complex.sin;
     const Complex_tan = Complex.tan;
@@ -103,6 +107,10 @@ module DiffComplex
     export function fromReal(x: Diff<number>): Diff<Complex>
     {
         return {value: Complex_fromReal(x.value), diff: Complex_fromReal(x.diff)};
+    }
+    export function fromImag(x: Diff<number>): Diff<Complex>
+    {
+        return {value: Complex_fromImag(x.value), diff: Complex_fromImag(x.diff)};
     }
     export function realPart(z: Diff<Complex>): Diff<number>
     {
@@ -153,6 +161,10 @@ module DiffComplex
     {
         return {value: Complex_mulK(x.value, y.value), diff: Complex_add(Complex_mulK(x.value, y.diff), Complex_mulK(x.diff, y.value))};
     }
+    export function mulPIk(a: number, x: Diff<Complex>): Diff<Complex>
+    {
+        return {value: Complex_mulPI(a, x.value), diff: Complex_mulPI(a, x.diff)};
+    }
     export function linearCombination2(a: Diff<number>, z: Diff<Complex>, b: Diff<number>, w: Diff<Complex>): Diff<Complex>
     {
         return add(mulK(a, z), mulK(b, w));
@@ -161,6 +173,16 @@ module DiffComplex
     {
         let y = Complex_exp(x.value);
         return {value: y, diff: Complex_mul(y, x.diff)};
+    }
+    export function log(x: Diff<Complex>): Diff<Complex>
+    {
+        let y = Complex_log(x.value);
+        return {value: y, diff: Complex_div(x.diff, x.value)};
+    }
+    export function sqrt(x: Diff<Complex>): Diff<Complex>
+    {
+        let y = Complex_sqrt(x.value);
+        return {value: y, diff: Complex_mulK(1/2, Complex_div(x.diff, y))};
     }
     export function powi(z: Diff<Complex>, n: number): Diff<Complex>
     {
