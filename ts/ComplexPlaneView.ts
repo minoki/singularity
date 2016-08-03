@@ -254,7 +254,7 @@ class ComplexPlaneView
         // Draw the labels
         context.save();
         context.scale(1, -1);
-        context.font = "italic 10px STIXGeneral, serif";
+        context.font = "10px STIXGeneral, serif";
         let a = Math.log10(80/Complex.abs(this._coord.scale));
         let b = a - Math.floor(a);
         let interval = Math.pow(10, Math.floor(a) +
@@ -283,7 +283,7 @@ class ComplexPlaneView
                     let v = i*interval;
                     let t = v.toFixed(prec);
                     // U+2212: MINUS SIGN
-                    let s = (v === 1 ? "i" : v === -1 ? "-i" : t+"i").replace("-","\u2212");
+                    let s = (v === 1 ? "\u{1D456}" : v === -1 ? "-\u{1D456}" : t+"\u{1D456}").replace("-","\u2212");
                     context.fillText(s, q.x, -q.y);
                 }
             }
