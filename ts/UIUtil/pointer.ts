@@ -26,7 +26,7 @@ module UIUtil
         addEventListener(type: "lostpointercapture", listener: (ev: PointerEvent) => any, useCapture?: boolean): void;
         removeEventListener(type: string, listener: EventListener, useCapture?: boolean): void;
     }
-    function handleMouseEvent(elem: Element, downHandler: (x: number, y: number) => PointerHandler, global: boolean): DetachHandlers
+    function handleMouseEvent(elem: Element, downHandler: (x: number, y: number) => PointerHandler, global: boolean, useCapture: boolean): DetachHandlers
     {
         let eventTarget: MouseEventTarget = global ? window : elem;
         let onMouseDown = (event: MouseEvent) => {
@@ -39,26 +39,26 @@ module UIUtil
                 }) : null;
                 let upHandler = (event: MouseEvent) => {
                     if (moveHandler) {
-                        eventTarget.removeEventListener("mousemove", moveHandler, false);
+                        eventTarget.removeEventListener("mousemove", moveHandler, useCapture);
                     }
-                    eventTarget.removeEventListener("mouseup", upHandler, false);
+                    eventTarget.removeEventListener("mouseup", upHandler, useCapture);
                     if (h.up) {
                         let rect = elem.getBoundingClientRect();
                         h.up(event.clientX - rect.left, event.clientY - rect.top);
                     }
                 };
                 if (moveHandler) {
-                    eventTarget.addEventListener("mousemove", moveHandler, false);
+                    eventTarget.addEventListener("mousemove", moveHandler, useCapture);
                 }
-                eventTarget.addEventListener("mouseup", upHandler, false);
+                eventTarget.addEventListener("mouseup", upHandler, useCapture);
             }
         };
-        elem.addEventListener("mousedown", onMouseDown, false);
+        elem.addEventListener("mousedown", onMouseDown, useCapture);
         return () => {
-            elem.removeEventListener("mousedown", onMouseDown, false);
+            elem.removeEventListener("mousedown", onMouseDown, useCapture);
         };
     }
-    function handleRawPointerEvent(elem: Element, downHandler: (x: number, y: number) => PointerHandler, global: boolean): DetachHandlers
+    function handleRawPointerEvent(elem: Element, downHandler: (x: number, y: number) => PointerHandler, global: boolean, useCapture: boolean): DetachHandlers
     {
         let eventTarget: MouseEventTarget = global ? window : elem;
         let onPointerDown = (event: PointerEvent) => {
@@ -75,10 +75,10 @@ module UIUtil
                 let upHandler = (event: PointerEvent) => {
                     if (event.pointerId === id) {
                         if (moveHandler) {
-                            eventTarget.removeEventListener("pointermove", moveHandler, false);
+                            eventTarget.removeEventListener("pointermove", moveHandler, useCapture);
                         }
-                        eventTarget.removeEventListener("pointerup", upHandler, false);
-                        eventTarget.removeEventListener("lostpointercapture", upHandler, false);
+                        eventTarget.removeEventListener("pointerup", upHandler, useCapture);
+                        eventTarget.removeEventListener("lostpointercapture", upHandler, useCapture);
                         if (h.up) {
                             let rect = elem.getBoundingClientRect();
                             h.up(event.clientX - rect.left, event.clientY - rect.top);
@@ -86,18 +86,18 @@ module UIUtil
                     }
                 };
                 if (moveHandler) {
-                    eventTarget.addEventListener("pointermove", moveHandler, false);
+                    eventTarget.addEventListener("pointermove", moveHandler, useCapture);
                 }
-                eventTarget.addEventListener("pointerup", upHandler, false);
-                eventTarget.addEventListener("lostpointercapture", upHandler, false);
+                eventTarget.addEventListener("pointerup", upHandler, useCapture);
+                eventTarget.addEventListener("lostpointercapture", upHandler, useCapture);
             }
         };
-        elem.addEventListener("pointerdown", onPointerDown, false);
+        elem.addEventListener("pointerdown", onPointerDown, useCapture);
         return () => {
-            elem.removeEventListener("pointerdown", onPointerDown, false);
+            elem.removeEventListener("pointerdown", onPointerDown, useCapture);
         };
     }
-    function handleTouchEvent(elem: Element, downHandler: (x: number, y: number) => PointerHandler, global: boolean)
+    function handleTouchEvent(elem: Element, downHandler: (x: number, y: number) => PointerHandler, global: boolean, useCapture: boolean)
     {
         let eventTarget = elem;//global ? window : elem;
         let handlerMap = new Map<number, PointerHandler>();
@@ -130,11 +130,11 @@ module UIUtil
                 }
             });
             if (moveHandlerCount === 0) {
-                elem.removeEventListener("touchmove", moveHandler, false);
+                elem.removeEventListener("touchmove", moveHandler, useCapture);
             }
             if (endHandlerCount === 0) {
-                elem.removeEventListener("touchend", endHandler, false);
-                elem.removeEventListener("touchcancel", endHandler, false);
+                elem.removeEventListener("touchend", endHandler, useCapture);
+                elem.removeEventListener("touchcancel", endHandler, useCapture);
             }
         };
         let onTouchStart = (event: TouchEvent) => {
@@ -160,30 +160,30 @@ module UIUtil
                 }
             });
             if (setMoveHandler) {
-                elem.addEventListener("touchmove", moveHandler, false);
+                elem.addEventListener("touchmove", moveHandler, useCapture);
             }
             if (setEndHandler) {
-                elem.addEventListener("touchend", endHandler, false);
-                elem.addEventListener("touchcancel", endHandler, false);
+                elem.addEventListener("touchend", endHandler, useCapture);
+                elem.addEventListener("touchcancel", endHandler, useCapture);
             }
             event.preventDefault();
         };
-        elem.addEventListener("touchstart", onTouchStart, false);
+        elem.addEventListener("touchstart", onTouchStart, useCapture);
         return () => {
-            elem.removeEventListener("touchstart", onTouchStart, false);
+            elem.removeEventListener("touchstart", onTouchStart, useCapture);
         };
     }
-    export function handlePointerEvent(elem: Element, downHandler: (x: number, y: number) => PointerHandler, global: boolean = false): DetachHandlers
+    export function handlePointerEvent(elem: Element, downHandler: (x: number, y: number) => PointerHandler, global: boolean = false, useCapture: boolean = false): DetachHandlers
     {
         if (navigator.pointerEnabled) {
             console.log("pointer mode");
-            return handleRawPointerEvent(elem, downHandler, global);
+            return handleRawPointerEvent(elem, downHandler, global, useCapture);
         } else {
             console.log("mouse mode");
-            let detachMouseHandlers = handleMouseEvent(elem, downHandler, global);
+            let detachMouseHandlers = handleMouseEvent(elem, downHandler, global, useCapture);
             if ("TouchEvent" in window) {
                 console.log("touch enabled");
-                let detachTouchHandlers = handleTouchEvent(elem, downHandler, global);
+                let detachTouchHandlers = handleTouchEvent(elem, downHandler, global, useCapture);
                 return () => {
                     detachMouseHandlers();
                     detachTouchHandlers();

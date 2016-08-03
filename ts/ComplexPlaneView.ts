@@ -40,7 +40,7 @@ class ComplexPlaneView
     private _detachPointerEvent: () => void = null;
     attach(canvas: HTMLCanvasElement)
     {
-        this._detachPointerEvent = UIUtil.handlePointerEvent(canvas, this.onPointerEvent, true);
+        this._detachPointerEvent = UIUtil.handlePointerEvent(canvas, this.onPointerEvent, true, true);
         canvas.addEventListener("keypress", this.onKeyPress, false);
         canvas.addEventListener("wheel", this.onWheel, false);
         window.addEventListener("resize", this.onWindowResize, false);
