@@ -37,7 +37,7 @@ class ComplexPlaneView
         this.attach(canvas);
     }
 
-    private _detachPointerEvent: () => void = null;
+    private _detachPointerEvent: (() => void) | null = null;
     attach(canvas: HTMLCanvasElement)
     {
         this._detachPointerEvent = UIUtil.handlePointerEvent(canvas, this.onPointerEvent, true, true);
@@ -183,7 +183,7 @@ class ComplexPlaneView
     {
         let w = this.canvas.width;
         let h = this.canvas.height;
-        let context: CanvasRenderingContext2D = this.canvas.getContext("2d");
+        let context: CanvasRenderingContext2D = this.canvas.getContext("2d")!;
         context.save();
         context.clearRect(0, 0, w, h);
         context.translate(w/2, h/2);
@@ -344,18 +344,19 @@ class ComplexPlaneView
     }
 
     // Pointer handling
-    private _pointerCurrentAction: Rx.IDisposable = null;
-    private _pointers: Array<{init: Complex; source: Rx.Observable<Complex>; disposable: Rx.IDisposable}> = [];
+    private _pointerCurrentAction: Rx.IDisposable | null = null;
+    private _pointers: Array<{init: Complex; source: Rx.Observable<Complex>; disposable: Rx.IDisposable | null}> = [];
     private addPointer(init: Complex, s: Rx.Observable<Complex>) {
-        let o = {init: init, source: s, disposable: <Rx.IDisposable>null};
+        let o = {init: init, source: s, disposable: <Rx.IDisposable | null>null};
         this._pointers.push(o);
         s.subscribeOnCompleted(() => {
             let i = this._pointers.indexOf(o);
             this._pointers.splice(i, 1);
             if (i < 2) {
                 if (this._pointers.length >= 2) {
-                    if (this._pointers[1].disposable) {
-                        this._pointers[1].disposable.dispose();
+                    let disposable = this._pointers[1].disposable;
+                    if (disposable) {
+                        disposable.dispose();
                         this._pointers[1].disposable = null;
                     }
                     this.pointerAction2(this._pointers[0], this._pointers[1]);

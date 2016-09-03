@@ -33,9 +33,10 @@ module UIUtil
             let rect = elem.getBoundingClientRect();
             let h = downHandler(event.clientX - rect.left, event.clientY - rect.top);
             if (h) {
-                let moveHandler = h.move ? ((event: MouseEvent) => {
+                let h_move = h.move;
+                let moveHandler = h_move ? ((event: MouseEvent) => {
                     let rect = elem.getBoundingClientRect();
-                    h.move(event.clientX - rect.left, event.clientY - rect.top);
+                    (h_move!)(event.clientX - rect.left, event.clientY - rect.top);
                 }) : null;
                 let upHandler = (event: MouseEvent) => {
                     if (moveHandler) {
@@ -66,10 +67,11 @@ module UIUtil
             let rect = elem.getBoundingClientRect();
             let h = downHandler(event.clientX - rect.left, event.clientY - rect.top);
             if (h) {
-                let moveHandler = h.move ? ((event: PointerEvent) => {
+                let h_move = h.move;
+                let moveHandler = h_move ? ((event: PointerEvent) => {
                     if (event.pointerId === id) {
                         let rect = elem.getBoundingClientRect();
-                        h.move(event.clientX - rect.left, event.clientY - rect.top);
+                        (h_move!)(event.clientX - rect.left, event.clientY - rect.top);
                     }
                 }) : null;
                 let upHandler = (event: PointerEvent) => {

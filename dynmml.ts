@@ -43,7 +43,7 @@ window.addEventListener("load", event => {
         };
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, wrapper, typesetCallback]);
 
-        let timer: number = null;
+        let timer: number | null = null;
         let observer = new MutationObserver(() => {
             wrapper.classList.remove("ready");
             if (jax) {

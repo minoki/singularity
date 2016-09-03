@@ -14,10 +14,10 @@ class ComplexIntegralView extends ComplexPlaneView
     constructor(canvas: HTMLCanvasElement, coord?: ComplexAffineTransform)
     {
         super(canvas, coord);
-        this.annotation1Text = this.annotation1.textContent;
-        this.annotation2Text = this.annotation2.textContent;
+        this.annotation1Text = this.annotation1.textContent!;
+        this.annotation2Text = this.annotation2.textContent!;
     }
-    currentCurve: Curve = null;
+    currentCurve: Curve | null = null;
     private _precHint: number = 0;
     doDrawItems(context: CanvasRenderingContext2D, rect: UIUtil.Rect, realRange: NRange, imagRange: NRange)
     {
@@ -81,7 +81,7 @@ class ComplexIntegralView extends ComplexPlaneView
         }
     }
 
-    private _function: AnalyticFunction = null;
+    private _function: AnalyticFunction | null = null;
     set "function"(f: AnalyticFunction)
     {
         if (this._function !== f) {
@@ -141,9 +141,9 @@ class ComplexIntegralView extends ComplexPlaneView
         return a.join("");
     }
 
-    private annotation1 = document.getElementById("annotation1");
+    private annotation1 = document.getElementById("annotation1")!;
     private annotation1Text: string;
-    private annotation2 = document.getElementById("annotation2");
+    private annotation2 = document.getElementById("annotation2")!;
     private annotation2Text: string;
     recalculate(highPrec: boolean)
     {
