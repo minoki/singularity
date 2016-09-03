@@ -9,6 +9,7 @@ module UIUtil
     interface RAFWithVendorPrefix extends Window {
         mozRequestAnimationFrame(callback: FrameRequestCallback): number;
         webkitRequestAnimationFrame(callback: FrameRequestCallback): number;
+        msRequestAnimationFrame(callback: FrameRequestCallback): number;
     }
     if (!('requestAnimationFrame' in window)) {
         window.requestAnimationFrame =
