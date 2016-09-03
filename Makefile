@@ -39,7 +39,7 @@ installfiles= $(files) \
  $(patsubst %,%.gz,$(filter %.js %.xhtml %.css %.map,$(files)))
 
 # Compiler options
-tscflags= --noImplicitAny --strictNullChecks --removeComments -t ES5 --noEmitOnError
+tscflags= --noImplicitAny --strictNullChecks --noImplicitThis --removeComments -t ES5 --noEmitOnError
 
 # Google Closure Compiler must be installed...
 # - via npm (globally): `npm install -g google-closure-compiler`
