@@ -9,6 +9,13 @@
 /// <reference path="Integrate.ts"/>
 /// <reference path="AnalyticFunction.ts"/>
 
+enum CatmullRomSplineCurveType
+{
+    Uniform,
+    Centripetal,
+    Chordal,
+}
+
 class ComplexIntegralView extends ComplexPlaneView
 {
     constructor(canvas: HTMLCanvasElement, coord?: ComplexAffineTransform)
@@ -50,6 +57,7 @@ class ComplexIntegralView extends ComplexPlaneView
         }
         this.doDrawLabels(context, rect, realRange, imagRange);
     }
+    private _curveType = CatmullRomSplineCurveType.Centripetal;
     doHandlePointerEvent(x: number, y: number): UIUtil.PointerHandler
     {
         let modeDraw = <HTMLInputElement>document.getElementById("mode-draw");
@@ -65,9 +73,29 @@ class ComplexIntegralView extends ComplexPlaneView
                     let z = this.convertFromView(this.physicalToView(x, y));
                     a.push(z);
                     if (modeDrawClosed.checked) {
-                        this.currentCurve = new ClosedCatmullRomSplineCurve(a);
+                        switch (this._curveType) {
+                        case CatmullRomSplineCurveType.Uniform:
+                            this.currentCurve = createClosedUniformCatmullRomSplineCurve(a);
+                            break;
+                        case CatmullRomSplineCurveType.Centripetal:
+                            this.currentCurve = createClosedCentripetalCatmullRomSplineCurve(a);
+                            break;
+                        case CatmullRomSplineCurveType.Chordal:
+                            this.currentCurve = createClosedChordalCatmullRomSplineCurve(a);
+                            break;
+                        }
                     } else {
-                        this.currentCurve = new CatmullRomSplineCurve(a);
+                        switch (this._curveType) {
+                        case CatmullRomSplineCurveType.Uniform:
+                            this.currentCurve = createUniformCatmullRomSplineCurve(a);
+                            break;
+                        case CatmullRomSplineCurveType.Centripetal:
+                            this.currentCurve = createCentripetalCatmullRomSplineCurve(a);
+                            break;
+                        case CatmullRomSplineCurveType.Chordal:
+                            this.currentCurve = createChordalCatmullRomSplineCurve(a);
+                            break;
+                        }
                     }
                     this.refresh();
                     this.recalculate(false);
