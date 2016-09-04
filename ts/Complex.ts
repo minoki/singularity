@@ -149,6 +149,10 @@ module Complex
     {
         return {x: a*z.x+b*w.x, y: a*z.y+b*w.y};
     }
+    export function linearCombination3(a0: number, z0: Complex, a1: number, z1: Complex, a2: number, z2: Complex): Complex
+    {
+        return {x: a0*z0.x+a1*z1.x+a2*z2.x, y: a0*z0.y+a1*z1.y+a2*z2.y};
+    }
     export function div(z: Complex, w: Complex): Complex
     {
         let x = z.x;
