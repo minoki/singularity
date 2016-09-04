@@ -85,6 +85,10 @@ module Complex
     {
         return Math_hypot(z.x, z.y);
     }
+    export function distance(z: Complex, w: Complex): number
+    {
+        return Math_hypot(z.x - w.x, z.y - w.y);
+    }
     export function arg(z: Complex): number
     {
         return Math_atan2(z.y, z.x);
