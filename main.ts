@@ -6,6 +6,7 @@
 
 /// <reference path="ts/ComplexIntegralView.ts"/>
 
+var theView: ComplexIntegralView | undefined;
 window.addEventListener("DOMContentLoaded", () => {
     let canvas = <HTMLCanvasElement>document.getElementById("plane");
     let view = new ComplexIntegralView(canvas);
@@ -13,6 +14,7 @@ window.addEventListener("DOMContentLoaded", () => {
         view.adjustSize();
         view.refresh();
     }, false);
+    theView = view;
     let functionRadioButtons: HTMLInputElement[] = Array.prototype.filter.call(document.getElementsByName("function"), (e: HTMLElement) => e.tagName === "input" && e.getAttribute("type") === "radio");
     functionRadioButtons.forEach(b => {
         let functionName = b.value;
