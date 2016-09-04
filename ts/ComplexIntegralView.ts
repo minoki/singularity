@@ -181,11 +181,22 @@ class ComplexIntegralView extends ComplexPlaneView
         if (this._function && this.currentCurve) {
             let f = this._function.value;
             let c = this.currentCurve;
-            let g = (t: number) => {
-                let ct = c.diff({value: t, diff: 1});
-                return Complex.mul(f(ct.value), ct.diff);
-            };
-            let v = integrate(g, 0, 1, highPrec ? 100*Math.max(this._precHint, 10) : 100);
+            let v = Complex.ZERO;
+            if (c instanceof SplineCurve) {
+                v = c.components.reduce((v, m) => {
+                    let g = (t: number) => {
+                        let ct = m.diff({value: t, diff: 1});
+                        return Complex.mul(f(ct.value), ct.diff);
+                    };
+                    return Complex.add(v, integrate(g, 0, 1, highPrec ? 100 : 20));
+                }, Complex.ZERO);
+            } else {
+                let g = (t: number) => {
+                    let ct = c.diff({value: t, diff: 1});
+                    return Complex.mul(f(ct.value), ct.diff);
+                };
+                v = integrate(g, 0, 1, highPrec ? 100*Math.max(this._precHint, 10) : 100);
+            }
             {
                 let m1 = ComplexIntegralView.complexToMathML(v);
                 let s1 = ComplexIntegralView.complexToString(v);
