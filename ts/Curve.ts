@@ -219,26 +219,49 @@ class CubicBezierCurve implements Curve
  */
 class SplineCurve implements Curve
 {
-    constructor(public components: Curve[])
+    parameters: number[];
+    constructor(public components: Curve[], parameters: number[])
     {
+        let n = components.length;
+        if (parameters.length !== n + 1) {
+            throw "SplineCurve: length mismatch";
+        }
+        let o = parameters[0];
+        let w = parameters[n] - o;
+        this.parameters = parameters.map(t => (t - o) / w);
     }
     value(t: number): Complex
     {
-        let N = this.components.length;
-        let k = Math.floor(t * N);
-        if (k === N) {
-            k = N - 1;
+        let k = 0, kmax = this.components.length; // [k, kmax)
+        while (k < kmax - 1) {
+            let kt = Math.floor((k + kmax) / 2);
+            let tk = this.parameters[kt];
+            if (t < tk) {
+                kmax = kt;
+            } else {
+                k = kt;
+            }
         }
-        return this.components[k].value(t * N - k);
+        let tk = this.parameters[k];
+        let tk1 = this.parameters[k + 1];
+        return this.components[k].value((t - tk) / (tk1 - tk));
     }
     diff(t: Diff<number>): Diff<Complex>
     {
-        let N = this.components.length;
-        let k = Math.floor(t.value * N);
-        if (k === N) {
-            k = N - 1;
+        let k = 0, kmax = this.components.length; // [k, kmax)
+        while (k < kmax - 1) {
+            let kt = Math.floor((k + kmax) / 2);
+            let tk = this.parameters[kt];
+            if (t.value < tk) {
+                kmax = kt;
+            } else {
+                k = kt;
+            }
         }
-        return this.components[k].diff({value: t.value * N - k, diff: t.diff * N});
+        let tk = this.parameters[k];
+        let tk1 = this.parameters[k + 1];
+        let td = tk1 - tk;
+        return this.components[k].diff({value: (t.value - tk) / td, diff: t.diff / td});
     }
     drawPartial(context: CanvasRenderingContext2D, transform: (z: Complex) => Complex)
     {
@@ -258,58 +281,156 @@ class SplineCurve implements Curve
     }
 }
 
-class CatmullRomSplineCurve extends SplineCurve
+function createCatmullRomSplineCurve(p: Complex[], t: number[]): Curve
 {
-    constructor(p: Complex[])
-    {
-        let n = p.length;
-        if (n < 2) {
-            super([]);
-        } else if (n === 2) {
-            super([new Segment(p[0], p[1])]);
-        } else {
-            let a: Curve[] = [];
-            {
-                // cp = p[1] + (p[2]-p[0])/4
-                let cp = Complex.add(p[1], Complex.mulK(1/4, Complex.sub(p[2], p[0])));
-                a.push(new QuadraticBezierCurve(p[0], cp, p[1]));
-            }
-            for (let i = 1; i < n - 2; ++i) {
-                // cp1 = p[i] + (p[i+1]-p[i-1])/6
-                // cp2 = p[i+1] - (p[i+2]-p[i])/6
-                let cp1 = Complex.add(p[i], Complex.mulK(1/6, Complex.sub(p[i+1], p[i-1])));
-                let cp2 = Complex.sub(p[i+1], Complex.mulK(1/6, Complex.sub(p[i+2], p[i])));
-                a.push(new CubicBezierCurve(p[i], cp1, cp2, p[i+1]));
-            }
-            {
-                // cp = p[n-2] + (p[n-1]-p[n-3])/4
-                let cp = Complex.add(p[n-2], Complex.mulK(1/4, Complex.sub(p[n-1], p[n-3])));
-                a.push(new QuadraticBezierCurve(p[n-2], cp, p[n-1]));
-            }
-            super(a);
+    let n = p.length;
+    if (t.length !== n) {
+        throw "createCatmullRomSplineCurve: invalid number of parameters";
+    }
+    if (n === 1) {
+        return new Segment(p[0], p[0]);
+    } else if (n === 2) {
+        return new Segment(p[0], p[1]);
+    } else if (n > 2) {
+        let a: Curve[] = [];
+        {
+            let d10 = t[1] - t[0];
+            let d20 = t[2] - t[0];
+            let d21 = t[2] - t[1];
+            let k = d10 / d20 * 0.5;
+            let c = d21 / d10;
+            let cp = Complex.linearCombination3(d20 / d21 * 0.5, p[1], k*c, p[0], -k/c, p[2]);
+            a.push(new QuadraticBezierCurve(p[0], cp, p[1]));
         }
+        for (let i = 1; i < n - 2; ++i) {
+            let d10 = t[i] - t[i-1];
+            let d20 = t[i+1] - t[i-1];
+            let d21 = t[i+1] - t[i];
+            let d31 = t[i+2] - t[i];
+            let d32 = t[i+2] - t[i+1];
+            let k1 = d21 / 3 / d20;
+            let l1 = d10 / d21;
+            let k2 = d21 / 3 / d31;
+            let l2 = d32 / d21;
+            let cp1 = Complex.linearCombination3((1+d20/d10)/3, p[i], k1*l1, p[i+1], -k1/l1, p[i-1]);
+            let cp2 = Complex.linearCombination3((1+d31/d32)/3, p[i+1], k2*l2, p[i], -k2/l2, p[i+2]);
+            a.push(new CubicBezierCurve(p[i], cp1, cp2, p[i+1]));
+        }
+        {
+            let d10 = t[n-2] - t[n-3];
+            let d20 = t[n-1] - t[n-3];
+            let d21 = t[n-1] - t[n-2];
+            let k = d21 / d20 * 0.5;
+            let c = d10 / d21;
+            let cp = Complex.linearCombination3(d20/2/d10, p[n-2], k*c, p[n-1], -k/c, p[n-3]);
+            a.push(new QuadraticBezierCurve(p[n-2], cp, p[n-1]));
+        }
+        return new SplineCurve(a, t);
+    } else {
+        throw "createCatmullRomSplineCurve: invalid number of points";
     }
 }
 
-class ClosedCatmullRomSplineCurve extends SplineCurve
+function createUniformCatmullRomSplineCurve(p: Complex[]): Curve
 {
-    constructor(p: Complex[])
-    {
-        let n = p.length;
-        if (n < 2) {
-            super([]);
-        } else if (n === 2) {
-            super([new Segment(p[0], p[1]), new Segment(p[1], p[0])]);
-        } else {
-            let a: Curve[] = [];
-            for (let i = 0; i < n; ++i) {
-                // cp1 = p[i] + (p[i+1]-p[i-1])/6
-                // cp2 = p[i+1] - (p[i+2]-p[i])/6
-                let cp1 = Complex.add(p[i % n], Complex.mulK(1/6, Complex.sub(p[(i+1) % n], p[(i-1+n) % n])));
-                let cp2 = Complex.sub(p[(i+1) % n], Complex.mulK(1/6, Complex.sub(p[(i+2) % n], p[i % n])));
-                a.push(new CubicBezierCurve(p[i % n], cp1, cp2, p[(i+1) % n]));
-            }
-            super(a);
-        }
+    let ts: number[] = [];
+    let N = p.length;
+    for (let i = 0; i < N; ++i) {
+        ts.push(i);
     }
+    return createCatmullRomSplineCurve(p, ts);
+}
+
+function createChordalCatmullRomSplineCurve(p: Complex[]): Curve
+{
+    let ts: number[] = [0];
+    let N = p.length;
+    let t = 0;
+    for (let i = 0; i < N - 1; ++i) {
+        t += Complex.distance(p[i], p[i+1]);
+        ts.push(t);
+    }
+    return createCatmullRomSplineCurve(p, ts);
+}
+
+function createCentripetalCatmullRomSplineCurve(p: Complex[]): Curve
+{
+    let ts: number[] = [0];
+    let N = p.length;
+    let t = 0;
+    for (let i = 0; i < N - 1; ++i) {
+        t += Math.sqrt(Complex.distance(p[i], p[i+1]));
+        ts.push(t);
+    }
+    return createCatmullRomSplineCurve(p, ts);
+}
+
+function createClosedCatmullRomSplineCurve(p: Complex[], t: number[]): Curve
+{
+    let n = p.length;
+    if (t.length !== n + 1) {
+        throw "createClosedCatmullRomSplineCurve: invalid number of parameters";
+    }
+    if (n === 1) {
+        return new Segment(p[0], p[0]);
+    } else if (n === 2) {
+        return new SplineCurve([new Segment(p[0], p[1]), new Segment(p[1], p[0])], [0, 0.5, 1]);
+    } else if (n > 2) {
+        let a: Curve[] = [];
+        let u = [...t, t[n] + t[1] - t[0], t[n] + t[2] - t[0], t[n] + t[3] - t[0]];
+        for (let i = 1; i <= n; ++i) {
+            let im1 = (i+n-1)%n;
+            let ip1 = (i+1)%n;
+            let ip2 = (i+2)%n;
+            let d10 = u[i] - u[i-1];
+            let d20 = u[i+1] - u[i-1];
+            let d21 = u[i+1] - u[i];
+            let d31 = u[i+2] - u[i];
+            let d32 = u[i+2] - u[i+1];
+            let k1 = d21 / 3 / d20;
+            let l1 = d10 / d21;
+            let k2 = d21 / 3 / d31;
+            let l2 = d32 / d21;
+            let cp1 = Complex.linearCombination3((1+d20/d10)/3, p[i%n], k1*l1, p[ip1], -k1/l1, p[im1]);
+            let cp2 = Complex.linearCombination3((1+d31/d32)/3, p[ip1], k2*l2, p[i%n], -k2/l2, p[ip2]);
+            a.push(new CubicBezierCurve(p[i%n], cp1, cp2, p[ip1]));
+        }
+        return new SplineCurve(a, t);
+    } else {
+        throw "createCatmullRomSplineCurve: invalid number of points";
+    }
+}
+
+function createClosedUniformCatmullRomSplineCurve(p: Complex[]): Curve
+{
+    let ts: number[] = [0];
+    let N = p.length;
+    for (let i = 1; i <= N; ++i) {
+        ts.push(i);
+    }
+    return createClosedCatmullRomSplineCurve(p, ts);
+}
+
+function createClosedChordalCatmullRomSplineCurve(p: Complex[]): Curve
+{
+    let ts: number[] = [0];
+    let N = p.length;
+    let t = 0;
+    for (let i = 0; i < N; ++i) {
+        t += Complex.distance(p[i], p[(i+1) % N]);
+        ts.push(t);
+    }
+    return createClosedCatmullRomSplineCurve(p, ts);
+}
+
+function createClosedCentripetalCatmullRomSplineCurve(p: Complex[]): Curve
+{
+    let ts: number[] = [0];
+    let N = p.length;
+    let t = 0;
+    for (let i = 0; i < N; ++i) {
+        t += Math.sqrt(Complex.distance(p[i], p[(i+1) % N]));
+        ts.push(t);
+    }
+    return createClosedCatmullRomSplineCurve(p, ts);
 }
