@@ -46,16 +46,45 @@ class ComplexIntegralView extends ComplexPlaneView
             });
             context.restore();
         }
-        if (this.currentCurve) {
+        let currentCurve = this.currentCurve;
+        if (currentCurve) {
             context.save();
             context.lineWidth = 3;
             context.strokeStyle = "navy";
             context.beginPath();
-            this.currentCurve.draw(context, this.convertToView.bind(this));
+            currentCurve.draw(context, this.convertToView.bind(this));
             context.stroke();
+
+            if (this._showControlPoints && currentCurve instanceof SplineCurve) {
+                context.fillStyle = "white";
+                let components = currentCurve.components;
+                components.forEach(m => {
+                    context.beginPath();
+                    let p = this.convertToView(m.value(0));
+                    context.arc(p.x, p.y, 1, 0, Math.PI*2);
+                    context.fill();
+                });
+                context.beginPath();
+                let p = this.convertToView(components[components.length - 1].value(1));
+                context.arc(p.x, p.y, 1, 0, Math.PI*2);
+                context.fill();
+            }
+
             context.restore();
         }
         this.doDrawLabels(context, rect, realRange, imagRange);
+    }
+    private _showControlPoints = false;
+    get showControlPoints()
+    {
+        return this._showControlPoints;
+    }
+    set showControlPoints(value: boolean)
+    {
+        if (this._showControlPoints !== value) {
+            this._showControlPoints = value;
+            this.refresh();
+        }
     }
     private _curveType = CatmullRomSplineCurveType.Centripetal;
     get curveType()
