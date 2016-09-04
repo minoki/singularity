@@ -58,6 +58,24 @@ class ComplexIntegralView extends ComplexPlaneView
         this.doDrawLabels(context, rect, realRange, imagRange);
     }
     private _curveType = CatmullRomSplineCurveType.Centripetal;
+    get curveType()
+    {
+        return this._curveType;
+    }
+    set curveType(type: CatmullRomSplineCurveType)
+    {
+        if (this._curveType !== type) {
+            this._curveType = type;
+            if (this.currentCurve) {
+                if (this._updateCurve) {
+                    this._updateCurve();
+                }
+                this.refresh();
+                this.recalculate(true);
+            }
+        }
+    }
+    private _updateCurve: (() => void) | null = null;
     doHandlePointerEvent(x: number, y: number): UIUtil.PointerHandler
     {
         let modeDraw = <HTMLInputElement>document.getElementById("mode-draw");
@@ -75,31 +93,33 @@ class ComplexIntegralView extends ComplexPlaneView
                         a.pop();
                     }
                     a.push(z);
-                    if (modeDrawClosed.checked) {
-                        switch (this._curveType) {
-                        case CatmullRomSplineCurveType.Uniform:
-                            this.currentCurve = createClosedUniformCatmullRomSplineCurve(a);
-                            break;
-                        case CatmullRomSplineCurveType.Centripetal:
-                            this.currentCurve = createClosedCentripetalCatmullRomSplineCurve(a);
-                            break;
-                        case CatmullRomSplineCurveType.Chordal:
-                            this.currentCurve = createClosedChordalCatmullRomSplineCurve(a);
-                            break;
+                    (this._updateCurve = () => {
+                        if (modeDrawClosed.checked) {
+                            switch (this._curveType) {
+                            case CatmullRomSplineCurveType.Uniform:
+                                this.currentCurve = createClosedUniformCatmullRomSplineCurve(a);
+                                break;
+                            case CatmullRomSplineCurveType.Centripetal:
+                                this.currentCurve = createClosedCentripetalCatmullRomSplineCurve(a);
+                                break;
+                            case CatmullRomSplineCurveType.Chordal:
+                                this.currentCurve = createClosedChordalCatmullRomSplineCurve(a);
+                                break;
+                            }
+                        } else {
+                            switch (this._curveType) {
+                            case CatmullRomSplineCurveType.Uniform:
+                                this.currentCurve = createUniformCatmullRomSplineCurve(a);
+                                break;
+                            case CatmullRomSplineCurveType.Centripetal:
+                                this.currentCurve = createCentripetalCatmullRomSplineCurve(a);
+                                break;
+                            case CatmullRomSplineCurveType.Chordal:
+                                this.currentCurve = createChordalCatmullRomSplineCurve(a);
+                                break;
+                            }
                         }
-                    } else {
-                        switch (this._curveType) {
-                        case CatmullRomSplineCurveType.Uniform:
-                            this.currentCurve = createUniformCatmullRomSplineCurve(a);
-                            break;
-                        case CatmullRomSplineCurveType.Centripetal:
-                            this.currentCurve = createCentripetalCatmullRomSplineCurve(a);
-                            break;
-                        case CatmullRomSplineCurveType.Chordal:
-                            this.currentCurve = createChordalCatmullRomSplineCurve(a);
-                            break;
-                        }
-                    }
+                    })();
                     this.refresh();
                     this.recalculate(false);
                 },
