@@ -71,6 +71,9 @@ class ComplexIntegralView extends ComplexPlaneView
             return {
                 move: (x, y) => {
                     let z = this.convertFromView(this.physicalToView(x, y));
+                    if (Complex.distance(z, a[a.length - 1])*Complex.abs(this.coord.scale) < 3) {
+                        a.pop();
+                    }
                     a.push(z);
                     if (modeDrawClosed.checked) {
                         switch (this._curveType) {
