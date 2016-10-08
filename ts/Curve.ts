@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 ARATA Mizuki
+ * Copyright (c) 2015,2016 ARATA Mizuki
  * This software is released under the MIT license.
  * See LICENSE.txt.
  */
@@ -137,7 +137,7 @@ class QuadraticBezierCurve implements Curve
 }
 
 /**
- * A quadratic bezier curve.
+ * A cubic bezier curve.
  *
  * This curve can be expressed as
  * \begin{align\*}
@@ -210,12 +210,17 @@ class CubicBezierCurve implements Curve
 
 /**
  * A spline curve consists of \\(N\\) components \\(c\_0,\dots,c\_{N-1}\\).
- * These components must satisfy \\(c\_k(1)=c_{k+1}(0)\\) and \\(c\_k'(1)=c\_{k+1}'(0)\\).
+ * These components must satisfy \\(c\_k(1)=c_{k+1}(0)\\) and \\(c\_k'(1)(T_{k}-T_{k-1})=c\_{k+1}'(0)(T_{k+1}-T_{k}))\\).
  *
  * This curve can be expressed as
  * \\[
- *   c(t) = c\_k(Nt-k) \quad \left(\frac{k}{N} \le t \le \frac{k+1}{N}\right).
+ *   c(t) = c\_k\Bigl(\frac{t-T_{k}}{T_{k+1}-T_{k}}\Bigr) \quad \left(T_{k} \le t \le T_{k+1}\right).
  * \\]
+ * The parameters $\{T_{k}\}$ satisfy
+ * \\begin{align*}
+ *   T_{0} = 0, T_{N} = 1,
+ *   T_{k} < T_{k+1}.
+ * \\end{align*}
  */
 class SplineCurve implements Curve
 {
