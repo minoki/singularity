@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 ARATA Mizuki
+ * Copyright (c) 2015,2016 ARATA Mizuki
  * This software is released under the MIT license.
  * See LICENSE.txt.
  */
