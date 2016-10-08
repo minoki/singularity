@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 ARATA Mizuki
+ * Copyright (c) 2015,2016 ARATA Mizuki
  * This software is released under the MIT license.
  * See LICENSE.txt.
  */
@@ -49,12 +49,14 @@ module Complex
     export const ONE = from(1, 0);
     export const MINUS_ONE = from(-1, 0);
     export const I = from(0, 1);
+    export const MINUS_I = from(0, -1);
     export const NAN = from(NaN, NaN);
     if (Object.freeze) {
         Object.freeze(ZERO);
         Object.freeze(ONE);
         Object.freeze(MINUS_ONE);
         Object.freeze(I);
+        Object.freeze(MINUS_I);
         Object.freeze(NAN);
     }
 
