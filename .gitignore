@@ -7,4 +7,5 @@ dynmml.js
 dynmml.js.map
 dynmml.min.js
 index.xhtml
+index.release.xhtml
 *.gz

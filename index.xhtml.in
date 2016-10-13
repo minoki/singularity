@@ -4,8 +4,8 @@
     <title>たのしい複素積分</title>
     <script type="text/javascript" src="bower_components/es6-shim/es6-shim.min.js" defer="defer"/>
     <script type="text/javascript" src="bower_components/rxjs/dist/rx.min.js" defer="defer"/>
-    <script type="text/javascript" src="main.min.js" defer="defer"/>
-    <script type="text/javascript" src="dynmml.min.js" defer="defer"/>
+    <script type="text/javascript" src="main.js" defer="defer"/>
+    <script type="text/javascript" src="dynmml.js" defer="defer"/>
     <script type="text/x-mathjax-config"><![CDATA[
       MathJax.Hub.Config({
         /*delayStartupUntil: "configured",*/

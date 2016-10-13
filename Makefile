@@ -23,9 +23,7 @@ files= \
  index.xhtml \
  style.css \
  main.js \
- main.min.js \
  dynmml.js \
- dynmml.min.js \
  bower_components/rxjs/dist/rx.js \
  bower_components/rxjs/dist/rx.min.js \
  bower_components/rxjs/dist/rx.map \
@@ -35,6 +33,14 @@ files= \
 
 # Files that will be installed (including gzipped version of the files)
 installfiles= $(files) \
+ main.min.js \
+ main.js.map \
+ dynmml.min.js \
+ dynmml.js.map \
+ main.min.js.gz \
+ main.js.map.gz \
+ dynmml.min.js.gz \
+ dynmml.js.map.gz \
  $(patsubst %,%.gz,$(filter %.js %.xhtml %.css %.map,$(files)))
 
 # Compiler options
@@ -66,14 +72,22 @@ dest= /Library/WebServer/Documents/webapp/$(name)
 
 all: $(files)
 
-install: $(installfiles)
-	for f in $(installfiles); do \
+install: $(patsubst index.xhtml%,index.release.xhtml%,$(installfiles))
+# index.xhtml: install the optimized version
+	mkdir -p $(dest)
+	install -m 0644 -p index.release.xhtml $(dest)/index.xhtml
+	install -m 0644 -p index.release.xhtml.gz $(dest)/index.xhtml.gz
+# Regular files: install the file as is
+	for f in $(filter-out index.xhtml%,$(installfiles)); do \
 	    mkdir -p $(dest)/`dirname $$f`; \
 	    install -m 0644 -p $$f $(dest)/$$f; \
 	done
 
 index.xhtml: index.xhtml.in strip-space.xsl
 	$(xsltproc) --encoding UTF-8 -o $@ strip-space.xsl $<
+
+index.release.xhtml: index.xhtml release.xsl
+	$(xsltproc) --encoding UTF-8 -o $@ release.xsl $<
 
 main.js: $(tsfiles)
 	tsc --out $@ $(tscflags) $(maints)
