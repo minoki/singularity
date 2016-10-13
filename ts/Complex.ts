@@ -6,8 +6,6 @@
 
 // Complex number
 
-/// <reference path="../typings/es6-shim/es6-shim.d.ts"/>
-
 type Complex = {x: number; y: number;};
 
 module Complex

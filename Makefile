@@ -16,8 +16,7 @@ tsfiles= \
  ts/UIUtil/line.ts \
  ts/UIUtil/pointer.ts \
  ts/UIUtil/requestAnimationFrame.ts \
- bower_components/rxjs/ts/rx.d.ts \
- typings/es6-shim/es6-shim.d.ts
+ bower_components/rxjs/ts/rx.d.ts
 
 # Generated files
 files= \
@@ -39,7 +38,7 @@ installfiles= $(files) \
  $(patsubst %,%.gz,$(filter %.js %.xhtml %.css %.map,$(files)))
 
 # Compiler options
-tscflags= --noImplicitAny --strictNullChecks --noImplicitThis --removeComments -t ES5 --noEmitOnError
+tscflags= --noImplicitAny --strictNullChecks --noImplicitThis --removeComments -t ES5 --noEmitOnError --lib dom,es5,es2015.core,es2015.collection
 
 # Google Closure Compiler must be installed...
 # - via npm (globally): `npm install -g google-closure-compiler`
@@ -93,9 +92,6 @@ dynmml.min.js dynmml.js.map: dynmml.js
 
 $(filter bower_components/%,$(files) $(tsfiles)):
 	bower update
-
-$(filter typings/%,$(tsfiles)):
-	tsd update
 
 %.gz: %
 	$(gzip) $<

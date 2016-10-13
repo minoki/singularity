@@ -4,8 +4,6 @@
  * See LICENSE.txt.
  */
 
-/// <reference path="../../typings/es6-shim/es6-shim.d.ts"/>
-
 module UIUtil
 {
     export interface PointerHandler
@@ -109,7 +107,7 @@ module UIUtil
             Array.from(event.changedTouches).forEach(touch => {
                 let id = touch.identifier;
                 if (handlerMap.has(id)) {
-                    let h = handlerMap.get(id);
+                    let h = handlerMap.get(id)!;
                     if (h.move) {
                         h.move(touch.clientX - rect.left, touch.clientY - rect.top);
                     }
@@ -121,7 +119,7 @@ module UIUtil
             Array.from(event.changedTouches).forEach(touch => {
                 let id = touch.identifier;
                 if (handlerMap.has(id)) {
-                    let h = handlerMap.get(id);
+                    let h = handlerMap.get(id)!;
                     if (h.up) {
                         h.up(touch.clientX - rect.left, touch.clientY - rect.top);
                     }
