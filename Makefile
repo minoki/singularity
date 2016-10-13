@@ -59,6 +59,8 @@ closure-compiler= $(shell \
 # Zopfli (https://github.com/google/zopfli) or plain gzip
 gzip= $(shell which zopfli || echo gzip -9 -k)
 
+xsltproc= xsltproc
+
 name= singularity
 dest= /Library/WebServer/Documents/webapp/$(name)
 
@@ -71,7 +73,7 @@ install: $(installfiles)
 	done
 
 index.xhtml: index.xhtml.in strip-space.xsl
-	xsltproc --encoding UTF-8 -o $@ strip-space.xsl $<
+	$(xsltproc) --encoding UTF-8 -o $@ strip-space.xsl $<
 
 main.js: $(tsfiles)
 	tsc --out $@ $(tscflags) $(maints)
