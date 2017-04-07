@@ -34,7 +34,7 @@ window.addEventListener("load", event => {
         let wrapper = document.createElement("div");
         wrapper.classList.add("dynamic-math-wrapper");
         wrapper.appendChild(clone);
-        mathElement.parentNode.insertBefore(wrapper, mathElement);
+        mathElement.parentNode!.insertBefore(wrapper, mathElement);
 
         let jax: any = null;
         let typesetCallback = () => {

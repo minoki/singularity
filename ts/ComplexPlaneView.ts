@@ -284,7 +284,12 @@ class ComplexPlaneView
                     let t = v.toFixed(prec);
                     // U+2212: MINUS SIGN
                     let s = (v === 1 ? "\u{1D456}" : v === -1 ? "-\u{1D456}" : t+"\u{1D456}").replace("-","\u2212");
+                    //let met = context.measureText(s);
                     context.fillText(s, q.x, -q.y);
+                    //context.save();
+                    //context.font = "italic 10px STIXGeneral, serif";
+                    //context.fillText("\u{1D456}", q.x + met.width, -q.y);
+                    //context.restore();
                 }
             }
         }

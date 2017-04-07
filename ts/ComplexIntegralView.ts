@@ -252,13 +252,13 @@ class ComplexIntegralView extends ComplexPlaneView
                 let v1 = document.getElementById("value1");
                 if (v1) {
                     while (v1.hasChildNodes()) {
-                        v1.removeChild(v1.firstChild);
+                        v1.removeChild(v1.firstChild!);
                     }
                     v1.appendChild(m1);
                 }
                 if (this.annotation1) {
                     while (this.annotation1.hasChildNodes()) {
-                        this.annotation1.removeChild(this.annotation1.firstChild);
+                        this.annotation1.removeChild(this.annotation1.firstChild!);
                     }
                     this.annotation1.appendChild(document.createTextNode(this.annotation1Text.replace("###", s1)));
                 }
@@ -270,13 +270,13 @@ class ComplexIntegralView extends ComplexPlaneView
                 let v2 = document.getElementById("value2");
                 if (v2) {
                     while (v2.hasChildNodes()) {
-                        v2.removeChild(v2.firstChild);
+                        v2.removeChild(v2.firstChild!);
                     }
                     v2.appendChild(m2);
                 }
                 if (this.annotation2) {
                     while (this.annotation2.hasChildNodes()) {
-                        this.annotation2.removeChild(this.annotation2.firstChild);
+                        this.annotation2.removeChild(this.annotation2.firstChild!);
                     }
                     this.annotation2.appendChild(document.createTextNode(this.annotation2Text.replace("###", s2)));
                 }
