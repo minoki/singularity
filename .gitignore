@@ -9,3 +9,5 @@ dynmml.min.js
 index.xhtml
 index.release.xhtml
 *.gz
+doc/
+node_modules/
