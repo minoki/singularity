@@ -1,20 +1,18 @@
 Singularity
 ===========
 
-[Singularity](http://d-poppo.nazo.cc/math/singularity/) is a web page that demonstrates how complex integrals work.
+[Singularity](https://miz-ar.info/math/singularity/) is a web page that demonstrates how complex integrals work.
 
 ## How to build
 
 ### Required tools
 
-- [TypeScript](http://www.typescriptlang.org/) 1.5 or later
+- [TypeScript](http://www.typescriptlang.org/) 2.2 or later
     - The code is written in TypeScript.
 - [Google Closure Compiler](https://developers.google.com/closure/compiler/)
     - Used to minify the JavaScript source code.
 - [bower](http://bower.io/)
     - Needed to fetch [RxJS](https://github.com/Reactive-Extensions/RxJS/) and [es6-shim](https://github.com/paulmillr/es6-shim/).
-- [TSD](http://definitelytyped.org/tsd/) (TypeScript Definition manager for DefinitelyTyped)
-    - Needed to fetch the TypeScript definition files for es6-shim.
 - GNU Make
     - The included Makefile is written for GNU Make.
 - [xsltproc](http://www.xmlsoft.org/)
@@ -34,7 +32,6 @@ Fetch the dependencies by:
 
 ```bash
 $ bower update
-$ tsd update
 ```
 
 ### Build and install
